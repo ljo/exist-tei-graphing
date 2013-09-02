@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<meta xmlns="http://exist-db.org/xquery/repo">
+    <description>eDrama for eXist-db using libraries for dynamic visualization.</description>
+    <author>Leif-Jöran Olsson</author>
+    <website/>
+    <status>alpha</status>
+    <license>GNU-GPLv3</license>
+    <copyright>true</copyright>
+    <type>application</type>
+    <target>tei-drama</target>
+    <prepare>pre-install.xql</prepare>
+    <finish/>
+</meta>
