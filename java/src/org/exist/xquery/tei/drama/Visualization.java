@@ -232,7 +232,15 @@ public class Visualization extends BasicFunction {
         String occupation = "unknown";
         NamedNodeMap persAttrs = child.getAttributes();
         if (persAttrs.getLength() > 0) {
-            persId = persAttrs.getNamedItemNS(Namespaces.XML_NS, "id").getNodeValue();
+            try {
+                persId = persAttrs.getNamedItemNS(Namespaces.XML_NS, "id").getNodeValue();
+            } catch (NullPointerException e1) {
+                try {
+                    persId = persAttrs.getNamedItem("sameAs").getNodeValue().substring(1);
+                } catch (NullPointerException e2) {
+                    LOG.error("Element personGrp is missing xml:id-attribute and  has no sameAs-attribute.");
+                }
+            }
             if (persAttrs.getNamedItem("sex") != null && !"".equals(persAttrs.getNamedItem("sex").getNodeValue())) {
                 sex = persAttrs.getNamedItem("sex").getNodeValue();
             }
@@ -334,7 +342,16 @@ public class Visualization extends BasicFunction {
                     LOG.info("listPerson/listPerson/personGrp");
                     NamedNodeMap persGrpAttrs = listPersonChild.getAttributes();
                     if (persGrpAttrs.getLength() > 0) {
-                        persId = persGrpAttrs.getNamedItemNS(Namespaces.XML_NS, "id").getNodeValue();
+                        try {
+                            persId = persGrpAttrs.getNamedItemNS(Namespaces.XML_NS, "id").getNodeValue();
+                        } catch (NullPointerException e) {
+                            try {
+                                persId = persGrpAttrs.getNamedItem("sameAs").getNodeValue().substring(1);
+                            } catch (NullPointerException e0) {
+                                LOG.error("Element personGrp is missing xml:id-attribute and  has no sameAs-attribute.");
+                            }
+                        }
+
                         if (persGrpAttrs.getNamedItem("sex") != null && !"".equals(persGrpAttrs.getNamedItem("sex").getNodeValue())) {
                             sex = persGrpAttrs.getNamedItem("sex").getNodeValue();
                         }
@@ -442,7 +459,7 @@ public class Visualization extends BasicFunction {
 
     public static String[] getIds(final String attrValue) {
         HashSet<String> set = new HashSet(); 
-        for (String idref : attrValue.split(" ")) {
+        for (String idref : attrValue.split("\\s+")) {
             set.add(idref.substring(1));
         }
         return set.toArray(new String[0]);
