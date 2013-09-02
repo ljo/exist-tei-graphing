@@ -190,59 +190,6 @@ public class Visualization extends BasicFunction {
        return cachedRelationGraph;
        } */
 
-    public void parsePersonRefs(Node personRefs) throws XPathException {
-        String refToId;
-        String type;
-        String name;
-        if (personRefs.getNodeType() == Node.ELEMENT_NODE && personRefs.getLocalName().equals("person-refs")) {
-            //Get the First Child
-            Node child = personRefs.getFirstChild();
-            while (child != null) {
-                //Parse each of the child nodes
-                if (child.getNodeType() == Node.ELEMENT_NODE && child.hasChildNodes()) {
-                    if (child.getLocalName().equals("person")) {
-                        //Get the First Child
-                        Node personChild = child.getFirstChild();
-                        while (personChild != null) {
-                            //Parse each of the personChild nodes
-                            if (personChild.getNodeType() == Node.ELEMENT_NODE && personChild.hasChildNodes()) {
-                                if (personChild.getLocalName().equals("ref-to-id")) {
-                                    
-                                    String value = child.getFirstChild().getNodeValue();
-                                    if (value == null) {
-                                        throw new XPathException("Value for 'ref-to-id' cannot be parsed");
-                                    } else {
-                                        refToId = value;
-                                    }
-                                } else if (personChild.getLocalName().equals("type")) {
-                                    String value = child.getFirstChild().getNodeValue();
-                                    if (value == null) {
-                                        throw new XPathException("Value for 'type' cannot be parsed");
-                                    } else {
-                                        type = value;
-                                    }
-                                } else if (personChild.getLocalName().equals("values")) {
-                                    String value = child.getFirstChild().getNodeValue();
-                                    if (value == null) {
-                                        throw new XPathException("Value for 'values' cannot be parsed");
-                                    } else {
-                                        name = value;
-                                    }
-                                    
-                                }
-                                
-                            }
-                            //next node
-                            personChild = personChild.getNextSibling();
-                        }
-                    }
-                }
-                //next node
-                child = child.getNextSibling();
-            }
-        }
-    }
-
     public void parseListPersons(Node listPerson) throws XPathException {
         String type = "unknown";
         String persId = "unknown";
@@ -270,9 +217,9 @@ public class Visualization extends BasicFunction {
                                child.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
                         parseListPersonGroup(child, type);
                     }
-                    //next person/listPerson node
-                    child = child.getNextSibling();
                 }
+                //next person/listPerson node
+                child = child.getNextSibling();
             }
         }
     }
