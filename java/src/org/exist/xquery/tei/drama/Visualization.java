@@ -467,15 +467,21 @@ public class Visualization extends BasicFunction {
 
     private void connectMutual(String type, String name, String[] subjectIds) {
         Relation r1 = new Relation(name, type);
-        for (String id : subjectIds) {
-            for (String id2 : subjectIds) {
-                if (!id.equals(id2)) {
+        if (subjectIds != null) {
+            String id1 = subjectIds[0];
+            for (String id : subjectIds) {
+                if (vertexFromSubjectId.get(id) != null) {
+                    id1 = id;
+                    break;
+                }
+            }
+
+            for (String id : subjectIds) {
+                if (!id.equals(id1)) {
                     if (vertexFromSubjectId.get(id) == null) {
                         LOG.error("Vertex is missing for mutual-id: " + id);
-                    } else if (vertexFromSubjectId.get(id2) == null) {
-                        LOG.error("Vertex is missing for mutual-id2: " + id2);
                     } else {
-                        relationGraph.connectUndirected(vertexFromSubjectId.get(id), vertexFromSubjectId.get(id2), r1);
+                        relationGraph.connectUndirected(vertexFromSubjectId.get(id1), vertexFromSubjectId.get(id), r1);
                     }
                 }
             }

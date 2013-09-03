@@ -38,7 +38,10 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.regex.*;
 
+import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
+import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
@@ -280,7 +283,11 @@ public class RelationGraphSerializer {
     
     public VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge>
         createServer(final JungRelationGraph jvg, final Dimension dimension) {
-        final Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout = new FRLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
+        Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout = new FRLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
+        //Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout = new ISOMLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
+        //Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout = new KKLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
+        //Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout = new CircleLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
+
         layout.setSize(dimension);
         final VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge> vis =
             new VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge>(layout, dimension);
@@ -325,6 +332,7 @@ public class RelationGraphSerializer {
         };
         vis.getRenderContext().setVertexStrokeTransformer(vertexStroke);
         //
+        vis.getRenderContext().getEdgeLabelRenderer().setRotateEdgeLabels(false);
         vis.getRenderContext().setEdgeLabelTransformer(new Transformer<JungRelationGraphEdge, String>() {
                 @Override
                     public String transform(JungRelationGraphEdge relationGraphEdgeModel) {
