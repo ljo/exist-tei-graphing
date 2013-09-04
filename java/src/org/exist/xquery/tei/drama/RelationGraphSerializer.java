@@ -82,6 +82,7 @@ import org.exist.xmldb.XmldbURI;
 import org.exist.xquery.*;
 import org.exist.xquery.modules.ModuleUtils;
 import org.exist.xquery.value.*;
+import org.exist.xquery.tei.drama.Relation.RelationType;
 import org.exist.xquery.tei.drama.jung.JungRelationGraph;
 import org.exist.xquery.tei.drama.jung.JungRelationGraphEdge;
 import org.exist.xquery.tei.drama.jung.JungRelationGraphVertex;
@@ -393,9 +394,9 @@ public class RelationGraphSerializer {
         @Override
             public Stroke transform(JungRelationGraphEdge edge) {
             LOG.debug("RelationType: " + edge.relation().getType());
-            if(edge.relation().getType().equals("social")) {
+            if(edge.relation().getType().equals(RelationType.SOCIAL)) {
                 return basic;
-            } else if(edge.relation().getType().equals("personal")) {
+            } else if(edge.relation().getType().equals(RelationType.PERSONAL)) {
                 return dashed;
             } else {
                 return dotted;
