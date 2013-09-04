@@ -11,7 +11,7 @@ public class PersonSubject implements Subject, Comparator<PersonSubject> {
 
     private final String id;
     private String name;
-    private Type type;
+    private SubjectType type;
     private Sex sex;
     private String sexString;
     private Age age;
@@ -20,34 +20,34 @@ public class PersonSubject implements Subject, Comparator<PersonSubject> {
     private boolean isGroup = false;
 
     public PersonSubject(String id) {
-	this(id, "", Type.UNKNOWN, Sex.UNKNOWN, Age.UNKNOWN, "", false);
+	this(id, "", SubjectType.UNKNOWN, Sex.UNKNOWN, Age.UNKNOWN, "", false);
     }
 
     public PersonSubject(String id, String name) {
-	this(id, name, Type.UNKNOWN, Sex.UNKNOWN, Age.UNKNOWN, "", false);
+	this(id, name, SubjectType.UNKNOWN, Sex.UNKNOWN, Age.UNKNOWN, "", false);
     }
 
 
     public PersonSubject(String id, String name, String type) {
-        this(id, name, Type.fromString(type), Sex.UNKNOWN, Age.UNKNOWN, "", false);
+        this(id, name, SubjectType.fromString(type), Sex.UNKNOWN, Age.UNKNOWN, "", false);
     }
     public PersonSubject(String id, String name, String type, String sex) {
-        this(id, name, Type.fromString(type), Sex.fromString(sex), Age.UNKNOWN, "", false);
+        this(id, name, SubjectType.fromString(type), Sex.fromString(sex), Age.UNKNOWN, "", false);
     }
 
     public PersonSubject(String id, String name, String type, String sex, String age) {
-        this(id, name, Type.fromString(type), Sex.fromString(sex), Age.fromString(age), "", false);
+        this(id, name, SubjectType.fromString(type), Sex.fromString(sex), Age.fromString(age), "", false);
     }
 
     public PersonSubject(String id, String name, String type, String sex, String age, String occupation) {
-        this(id, name, Type.fromString(type), Sex.fromString(sex), Age.fromString(age), occupation, false);
+        this(id, name, SubjectType.fromString(type), Sex.fromString(sex), Age.fromString(age), occupation, false);
     }
 
     public PersonSubject(String id, String name, String type, String sex, String age, String occupation, boolean isGroup) {
-        this(id, name, Type.fromString(type), Sex.fromString(sex), Age.fromString(age), occupation, isGroup);
+        this(id, name, SubjectType.fromString(type), Sex.fromString(sex), Age.fromString(age), occupation, isGroup);
     }
 
-    public PersonSubject(String id, String name, Type type, Sex sex, Age age, String occupation, boolean isGroup) {
+    public PersonSubject(String id, String name, SubjectType type, Sex sex, Age age, String occupation, boolean isGroup) {
 	this.id = id;
 	this.name = name;
 	this.type = type;
@@ -110,7 +110,7 @@ public class PersonSubject implements Subject, Comparator<PersonSubject> {
         }
     }
 
-    public enum Type {
+    public enum SubjectType {
         UNKNOWN("unknown"),
         CAST("cast"),
         NONCAST("noncast"),
@@ -120,7 +120,7 @@ public class PersonSubject implements Subject, Comparator<PersonSubject> {
 
         private String name;
         
-        private Type(String name) {
+        private SubjectType(String name) {
             this.name = name;
         }
 
@@ -128,8 +128,8 @@ public class PersonSubject implements Subject, Comparator<PersonSubject> {
             return name;
         }
         
-        public static Type fromString(String string) {
-            for (Type value : values()) {
+        public static SubjectType fromString(final String string) {
+            for (SubjectType value : values()) {
                 if (value.name.equals(string)) {
                     return value;
                 }
@@ -159,16 +159,16 @@ public class PersonSubject implements Subject, Comparator<PersonSubject> {
 	this.name = name;
     }
 
-    public Type getType() {
-	return type;
+    public SubjectType getType() {
+        return type;
     }
 
-    public void setType(final Type type) {
-	this.type = type;
+    public void setType(final SubjectType type) {
+        this.type = type;
     }
     
     public Sex getSex() {
-	return sex;
+        return sex;
     }
 
     public void setSex(final Sex sex) {

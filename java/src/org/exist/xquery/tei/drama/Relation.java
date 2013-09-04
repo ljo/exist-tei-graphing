@@ -15,7 +15,7 @@ public class Relation implements Comparator<Relation> {
 
     public Relation(String verb, String type) {
     this.verb = verb;
-    this.type = RelationType.SOCIAL;
+    this.type = RelationType.fromString(type);
   }
 
     public enum RelationType {
@@ -32,6 +32,15 @@ public class Relation implements Comparator<Relation> {
         public String toString() {
             return name;
         }
+
+        public static RelationType fromString(final String string) {
+            for (RelationType value : values()) {
+                if (value.name.equals(string)) {
+                    return value;
+                }
+            }
+            return null;            
+        }
     }
  
     public String getVerb() {
@@ -42,12 +51,12 @@ public class Relation implements Comparator<Relation> {
         return edge.relation().getVerb();
     }
 
-    public String getType() {
-        return type.toString();
+    public RelationType getType() {
+        return type;
     }
 
     public static String getType(final RelationGraph.Edge edge) {
-        return edge.relation().getType();
+        return edge.relation().getType().toString();
     }
 
 
