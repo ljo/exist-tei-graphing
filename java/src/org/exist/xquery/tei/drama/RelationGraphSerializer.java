@@ -270,7 +270,7 @@ public class RelationGraphSerializer {
             OutputStream os = System.out;
             //Writer out = new OutputStreamWriter(os, "UTF-8");
             Writer out = new StringWriter();
-            svgGenerator.stream(out, true);
+            svgGenerator.stream(out, false);
 
             os.flush();
             os.close();
