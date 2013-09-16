@@ -389,17 +389,32 @@ public class RelationGraphSerializer {
 
     static class EdgeStrokeRenderer implements Transformer<JungRelationGraphEdge, Stroke> {
         private final Stroke basic = new BasicStroke(1);
+        private final Stroke basic2 = new BasicStroke(2);
+        private final Stroke basic3 = new BasicStroke(3);
         private final Stroke dashed = RenderContext.DASHED;
         private final Stroke dotted = RenderContext.DOTTED;
         @Override
             public Stroke transform(JungRelationGraphEdge edge) {
-            LOG.debug("RelationType: " + edge.relation().getType());
-            if(edge.relation().getType().equals(RelationType.SOCIAL)) {
-                return basic;
-            } else if(edge.relation().getType().equals(RelationType.PERSONAL)) {
-                return dashed;
+            if(edge.relation() instanceof WeightedRelation) {
+                if (((WeightedRelation)edge.relation()).getWeight() > 10) {
+                    return basic3;
+                } else if (((WeightedRelation)edge.relation()).getWeight() > 4) {
+                    return basic2;
+                } else if (((WeightedRelation)edge.relation()).getWeight() > 1) {
+                    return basic;
+                } else {
+                    return dotted;
+                }
             } else {
-                return dotted;
+                
+                LOG.debug("RelationType: " + edge.relation().getType());
+                if(edge.relation().getType().equals(RelationType.SOCIAL)) {
+                    return basic;
+                } else if(edge.relation().getType().equals(RelationType.PERSONAL)) {
+                    return dashed;
+                } else {
+                    return dotted;
+                }
             }
         }
     }

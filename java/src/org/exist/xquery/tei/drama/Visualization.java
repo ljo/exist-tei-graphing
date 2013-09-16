@@ -206,19 +206,18 @@ public class Visualization extends BasicFunction {
             //Get the listPerson children
             Node child = listPerson.getFirstChild();
             while (child != null) {
-                //Parse each of the child nodes person/listPerson
+                //Parse each of the child nodes person/personGrp/listPerson
                 if (child.getNodeType() == Node.ELEMENT_NODE && child.hasChildNodes()) {
-                    if (child.getLocalName().equals("person") &&
+                    if ((child.getLocalName().equals("person") || child.getLocalName().equals("personGrp")) &&
                         child.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
                         
                         parsePersons(child, type);
-
                     } else if (child.getLocalName().equals("listPerson") &&
                                child.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
                         parseListPersonGroup(child, type);
                     }
                 }
-                //next person/listPerson node
+                //next person/PersonGrp/listPerson node
                 child = child.getNextSibling();
             }
         }
@@ -287,8 +286,11 @@ public class Visualization extends BasicFunction {
             personChild = personChild.getNextSibling();    
         }
         LOG.info("parsePersons::" + persId +":"+ persName +":"+ type +":"+ sex +":"+ age +":"+ occupation);
-        vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation)));
-                    
+        if (child.getLocalName().equals("personGrp")) {
+            vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation, true)));
+        } else {
+            vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation)));
+        }
     }
 
     public void parsePersonChildren(Node personChild, String persName, String sex, String age, String occupation) throws XPathException {
@@ -324,6 +326,7 @@ public class Visualization extends BasicFunction {
             }
         }                            
     }
+
 
     public void parseListPersonGroup(Node child, String type) throws XPathException {
         //Get the listPerson/listPerson child nodes
@@ -407,7 +410,6 @@ public class Visualization extends BasicFunction {
         }
     }
 
-
     public void parseListRelations(Node relations) throws XPathException {
         if (relations.getNodeType() == Node.ELEMENT_NODE &&
             relations.getLocalName().equals("listRelation") &&
@@ -415,6 +417,7 @@ public class Visualization extends BasicFunction {
             //Get the First Child
             Node child = relations.getFirstChild();
             while (child != null) {
+                String relSortKey = "";
                 String relType = "unknown";
                 String name;
                 boolean hasMutual = false;
@@ -432,13 +435,28 @@ public class Visualization extends BasicFunction {
                                 relType = relAttrs.getNamedItem("type").getNodeValue();
                             }
 
+                            if (relAttrs.getNamedItem("sortKey") != null && !"".equals(relAttrs.getNamedItem("sortKey").getNodeValue())) {
+                                relSortKey = relAttrs.getNamedItem("sortKey").getNodeValue();
+                            }
+
                             if (relAttrs.getNamedItem("mutual") != null && !"".equals(relAttrs.getNamedItem("mutual").getNodeValue())) {
                                 String[] mutual;
                                 mutual = getIds(relAttrs.getNamedItem("mutual").getNodeValue());
                                 hasMutual = true;
                                 LOG.info("parseListRelations::mutual: " + relType +":"+ name);
-                                connectMutual(relType, name, mutual);
-                            } else if (relAttrs.getNamedItem("active") != null && !"".equals(relAttrs.getNamedItem("active").getNodeValue()) && !hasMutual) {
+
+                                if (relSortKey != null) {
+                                    try {
+                                        int weight = Integer.parseInt(relSortKey);
+                                        connectMutual(relType, name, weight, mutual);
+                                    } catch (NumberFormatException e) {
+                                        connectMutual(relType, name, mutual);
+                                    }
+                                } else {
+                                    connectMutual(relType, name, mutual);
+                                }
+
+                                } else if (relAttrs.getNamedItem("active") != null && !"".equals(relAttrs.getNamedItem("active").getNodeValue()) && !hasMutual) {
                                 String[] active;
                                 String[] passive;
                                 
@@ -467,6 +485,15 @@ public class Visualization extends BasicFunction {
 
     private void connectMutual(String type, String name, String[] subjectIds) {
         Relation r1 = new Relation(name, type);
+        connectMutual(r1, subjectIds);
+    }
+
+    private void connectMutual(String type, String name, int weight, String[] subjectIds) {
+        Relation r1 = new WeightedRelation(name, type, weight);
+        connectMutual(r1, subjectIds);
+    }
+
+    private void connectMutual(Relation relation, String[] subjectIds) {
         if (subjectIds != null) {
             String id1 = subjectIds[0];
             for (String id : subjectIds) {
@@ -481,7 +508,7 @@ public class Visualization extends BasicFunction {
                     if (vertexFromSubjectId.get(id) == null) {
                         LOG.error("Vertex is missing for mutual-id: " + id);
                     } else {
-                        relationGraph.connectUndirected(vertexFromSubjectId.get(id1), vertexFromSubjectId.get(id), r1);
+                        relationGraph.connectUndirected(vertexFromSubjectId.get(id1), vertexFromSubjectId.get(id), relation);
                     }
                 }
             }
