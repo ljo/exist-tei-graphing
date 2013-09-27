@@ -340,11 +340,18 @@ public class RelationGraphSerializer {
         Transformer<JungRelationGraphVertex, Stroke> vertexStroke = new Transformer<JungRelationGraphVertex, Stroke>() {
             float dash[] = { 10.0f };
             public Stroke transform(JungRelationGraphVertex v) {
-                if (v.subject() instanceof PersonSubject && ((PersonSubject) v.subject()).getType().toString().equals("noncast") ) {
-                    return new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
-                                           BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
-                } else {
-                    return new BasicStroke(2);
+                try {
+                    if (v.subject() instanceof PersonSubject && ((PersonSubject) v.subject()).getType().toString().equals("noncast")) {
+                        return new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
+                                               BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
+                    } else {
+                        return new BasicStroke(2);
+                    }
+
+                } catch (NullPointerException e) {
+                    LOG.error("Problem with vertex: " + v.toString() + ", probably an unsupported subject type.");
+                    return new BasicStroke(0.5f, BasicStroke.CAP_BUTT,
+                                               BasicStroke.JOIN_MITER, 20.0f, dash, 0.0f);
                 }
             }
         };
@@ -406,15 +413,20 @@ public class RelationGraphSerializer {
                     return dotted;
                 }
             } else {
-                
-                LOG.debug("RelationType: " + edge.relation().getType());
-                if(edge.relation().getType().equals(RelationType.SOCIAL)) {
-                    return basic;
-                } else if(edge.relation().getType().equals(RelationType.PERSONAL)) {
-                    return dashed;
-                } else {
+                try {
+                    LOG.debug("RelationType: " + edge.relation().getType() == null ? "failed" : edge.relation().getType());
+                    if(edge.relation().getType().equals(RelationType.SOCIAL)) {
+                        return basic;
+                    } else if(edge.relation().getType().equals(RelationType.PERSONAL)) {
+                        return dashed;
+                    } else {
+                        return dotted;
+                    }
+                } catch (NullPointerException e) {
+                    LOG.error("RelationType: " + edge.relation().toString());
                     return dotted;
                 }
+
             }
         }
     }

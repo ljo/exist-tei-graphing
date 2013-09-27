@@ -229,6 +229,8 @@ public class Visualization extends BasicFunction {
         String sex = "unknown";
         String age = "unknown";
         String occupation = "unknown";
+        String sortKey = "";
+        int weight = 1;
         NamedNodeMap persAttrs = child.getAttributes();
         if (persAttrs.getLength() > 0) {
             try {
@@ -242,6 +244,10 @@ public class Visualization extends BasicFunction {
             }
             if (persAttrs.getNamedItem("sex") != null && !"".equals(persAttrs.getNamedItem("sex").getNodeValue())) {
                 sex = persAttrs.getNamedItem("sex").getNodeValue();
+            }
+
+            if (persAttrs.getNamedItem("sortKey") != null && !"".equals(persAttrs.getNamedItem("sortKey").getNodeValue())) {
+                sortKey = persAttrs.getNamedItem("sortKey").getNodeValue();
             }
         }
         //Get the person child nodes
@@ -286,10 +292,28 @@ public class Visualization extends BasicFunction {
             personChild = personChild.getNextSibling();    
         }
         LOG.info("parsePersons::" + persId +":"+ persName +":"+ type +":"+ sex +":"+ age +":"+ occupation);
-        if (child.getLocalName().equals("personGrp")) {
-            vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation, true)));
+        
+        if (sortKey != null) {
+            try {
+                weight = Integer.parseInt(sortKey);
+                if (child.getLocalName().equals("personGrp")) {
+                    vertexFromSubjectId.put(persId, relationGraph.add(new WeightedPersonSubject(persId, persName, type, sex, age, occupation, true, weight)));
+                } else {
+                    vertexFromSubjectId.put(persId, relationGraph.add(new WeightedPersonSubject(persId, persName, type, sex, age, occupation, weight)));
+                }
+            } catch (NumberFormatException e) {
+                if (child.getLocalName().equals("personGrp")) {
+                    vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation, true)));
+                } else {
+                    vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation)));
+                }
+            }
         } else {
-            vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation)));
+            if (child.getLocalName().equals("personGrp")) {
+                vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation, true)));
+            } else {
+                vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation)));
+            }
         }
     }
 
@@ -478,7 +502,13 @@ public class Visualization extends BasicFunction {
     public static String[] getIds(final String attrValue) {
         HashSet<String> set = new HashSet(); 
         for (String idref : attrValue.split("\\s+")) {
-            set.add(idref.substring(1));
+            try {
+                set.add(idref.substring(1));
+            } catch (StringIndexOutOfBoundsException e) {
+                LOG.error("Failed: " + attrValue +":" + idref == null ? "empty substring" : idref);
+            }
+
+
         }
         return set.toArray(new String[0]);
     }
