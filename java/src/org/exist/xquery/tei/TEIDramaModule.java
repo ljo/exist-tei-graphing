@@ -18,7 +18,8 @@ public class TEIDramaModule extends AbstractInternalModule {
 
     public final static FunctionDef[] functions = {
         new FunctionDef(Visualization.signatures[0], Visualization.class),
-        new FunctionDef(Visualization.signatures[1], Visualization.class)
+        new FunctionDef(Visualization.signatures[1], Visualization.class),
+        new FunctionDef(Visualization.signatures[2], Visualization.class)
     };
 
     public TEIDramaModule(Map<String, List<? extends Object>> parameters) {

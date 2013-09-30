@@ -58,6 +58,7 @@ import org.exist.util.MimeType;
 import org.exist.util.VirtualTempFile;
 import org.exist.xmldb.XmldbURI;
 import org.exist.xquery.*;
+import org.exist.xquery.modules.ModuleUtils;
 import org.exist.xquery.tei.TEIDramaModule;
 import org.exist.xquery.tei.drama.jung.JungRelationGraph;
 import org.exist.xquery.tei.drama.jung.JungRelationGraphVertex;
@@ -89,10 +90,24 @@ public class Visualization extends BasicFunction {
                                                                     "The listRelation elements to create the graph from")
                               },
                               new FunctionReturnSequenceType(Type.NODE, Cardinality.EXACTLY_ONE,
-                                                             "The serialized relation graph, by default GraphML, otherwise output-type.")
+                                                             "The serialized relation graph, by default SVG, otherwise output-type.")
                               ),
         new FunctionSignature(
                               new QName("relation-graph", TEIDramaModule.NAMESPACE_URI, TEIDramaModule.PREFIX),
+                              "Serializes a relation graph based on provided persons and relations. All other parameters use default values if empty.",
+                              new SequenceType[] {
+                                  new FunctionParameterSequenceType("listPersons", Type.ELEMENT, Cardinality.ONE_OR_MORE,
+                                                                    "The listPerson elements to create the graph from"),
+                                  new FunctionParameterSequenceType("listRelations", Type.ELEMENT, Cardinality.ONE_OR_MORE,
+                                                                    "The listRelation elements to create the graph from"),
+                                  new FunctionParameterSequenceType("configuration", Type.ELEMENT, Cardinality.EXACTLY_ONE,
+                                                                    "The configuration, currently output type, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt/parameters&gt;.")
+                              },
+                              new FunctionReturnSequenceType(Type.NODE, Cardinality.EXACTLY_ONE,
+                                                             "The serialized relation graph, by default SVG, otherwise output-type.")
+                              ),
+        new FunctionSignature(
+                              new QName("relation-graph-stored", TEIDramaModule.NAMESPACE_URI, TEIDramaModule.PREFIX),
                               "Serializes a relation graph. All other parameters use default values if empty.",
                               new SequenceType[] {
                                   new FunctionParameterSequenceType("relation-graph-doc", Type.ANY_URI, Cardinality.EXACTLY_ONE,
@@ -101,7 +116,7 @@ public class Visualization extends BasicFunction {
                                                                     "The path within the database to the tei document to use")
                               },
                               new FunctionReturnSequenceType(Type.NODE, Cardinality.ONE_OR_MORE,
-                                                             "The serialized relation graph, by default GraphML, otherwise output-type.")
+                                                             "The serialized relation graph, by default SVG, otherwise output-type.")
                               )
     };
 
@@ -110,7 +125,7 @@ public class Visualization extends BasicFunction {
     private static String relationGraphSource = null;
     private static RelationGraph cachedRelationGraph = null;
 
-    private static RelationGraph relationGraph;
+    private RelationGraph relationGraph;
 
     private final Map<String, RelationGraph.Vertex> vertexFromSubjectId = new HashMap();
 
@@ -126,14 +141,17 @@ public class Visualization extends BasicFunction {
         boolean useStoredRelationGraph = isCalledAs("relation-graph-stored")
             && getSignature().getArgumentCount() == 5 ? true : false;
 
+        Properties parameters = new Properties();
+        parameters.setProperty("output", "svg");
+
         context.pushDocumentContext();
         ValueSequence result = new ValueSequence();
         try {
             relationGraph = new JungRelationGraph();
-            
+            vertexFromSubjectId.clear();
             if (!args[0].isEmpty()) {
                 for (int i = 0; i < args[0].getItemCount(); i++) {
-                    LOG.debug("Lägger till listPerson #: " + i);
+                    LOG.debug("Adding listPerson #: " + i);
                     parseListPersons(((NodeValue)args[0].itemAt(i)).getNode());
                 }
             }
@@ -141,15 +159,20 @@ public class Visualization extends BasicFunction {
             
             if (!args[1].isEmpty()) {
                 for (int i = 0; i < args[1].getItemCount(); i++) {
-                    LOG.debug("Lägger till listRelation #: " + i);
+                    LOG.debug("Adding listRelation #: " + i);
                     parseListRelations(((NodeValue)args[1].itemAt(i)).getNode());
                 }
             }
             LOG.info("Number of Relations (edges):" +relationGraph.edgeCount());
-                        
-
+             
+            if (isCalledAs("relation-graph")
+                && getSignature().getArgumentCount() == 3) {
+                if (!args[2].isEmpty()) {
+                    parameters = ModuleUtils.parseParameters(((NodeValue)args[2].itemAt(0)).getNode());
+                }           
+            }
             RelationGraphSerializer rgs = new RelationGraphSerializer(context, relationGraph);
-            return rgs.relationGraphReport("svg");
+            return rgs.relationGraphReport(parameters.getProperty("output"));
         } finally {
             context.popDocumentContext();
         }

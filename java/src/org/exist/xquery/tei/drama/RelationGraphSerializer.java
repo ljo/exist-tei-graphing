@@ -332,7 +332,7 @@ public class RelationGraphSerializer {
             public Shape transform(JungRelationGraphVertex vm) {
                 int sl = vm.toString().length() * 6;
                 
-                return new Ellipse2D.Double(-25, -10, 50 + sl, 20 + (sl / 4));
+                return new Ellipse2D.Double(-25, -10, 50 + sl, 20);
             }
         };
         vis.getRenderContext().setVertexShapeTransformer(vertexShape);
@@ -423,7 +423,7 @@ public class RelationGraphSerializer {
                         return dotted;
                     }
                 } catch (NullPointerException e) {
-                    LOG.error("RelationType: " + edge.relation().toString());
+                    LOG.error("RelationType: " + edge.toString());
                     return dotted;
                 }
 
