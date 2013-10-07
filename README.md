@@ -13,7 +13,7 @@ Integrates (TEI) graphing through the jung2 and batik libraries into eXist-db.
 ## Functions
 There are currently one main function:
 
-#graphing:relation-graph
+###graphing:relation-graph
 graphing:relation-graph($listPersons as element()+, $listRelations as element
 ()+) as node()
 
@@ -25,7 +25,7 @@ Parameters:
 Returns:
     node() : The serialized relation graph in default SVG output-type.
 
-#graphing:relation-graph
+###graphing:relation-graph
 graphing:relation-graph($listPersons as element()+, $listRelations as element
 ()+, $configuration as element()) as node()
 
