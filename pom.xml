@@ -6,7 +6,7 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>exist-tei-graphing</name>
-    <description>Integrates (TEI) Graphing dynamic visualization.</description>
+    <description>Integrates (TEI) Graphing dynamic visualization into eXist-db.</description>
     <organization>
         <name>The eXist-db Project</name>
         <url>http://exist-db.org/</url>
@@ -66,7 +66,7 @@
           </configuration>
           <executions>
             <execution>
-              <id>make-collatex-core-jar-with-dependencies</id>
+              <id>make-tei-graphing-jar-with-dependencies</id>
               <phase>package</phase>
               <goals>
                 <goal>single</goal>
