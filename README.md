@@ -1,7 +1,7 @@
 exist-tei-graphing
 ===========================
 
-Integrates (TEI) graphing through the jung2 library into eXist-db.
+Integrates (TEI) graphing through the jung2 and batik libraries into eXist-db.
 
 ## Compile and install
 
@@ -13,8 +13,8 @@ Integrates (TEI) graphing through the jung2 library into eXist-db.
 ## Functions
 There are currently one main function:
 
-### edrama:relation-graph
-edrama:relation-graph($listPersons as element()+, $listRelations as element()+) 
+### graphing:relation-graph
+graphing:relation-graph($listPersons as element()+, $listRelations as element()+) 
 as node()
 
 Serializes a relation graph based on provided persons and relations. All other parameters use default values if empty.
@@ -25,8 +25,8 @@ Parameters:
 Returns:
     node() : The serialized relation graph, by default SVG, otherwise output-type.
 
-###edrama:relation-graph
-edrama:relation-graph($listPersons as element()+, $listRelations as element()+, 
+###graphing:relation-graph
+graphing:relation-graph($listPersons as element()+, $listRelations as element()+, 
 $configuration as element()) as node()
 
 Serializes a relation graph based on provided persons and relations. All other parameters use default values if empty.
@@ -44,9 +44,9 @@ Returns:
 
 ```xquery
 xquery version "3.0";
-import module namespace edrama="http://exist-db.org/xquery/tei-graphing";
+import module namespace graphing="http://exist-db.org/xquery/tei-graphing";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 let $doc := doc("/db/dramawebben/data/works/IndebetouH_IDetGrona/IndebetouH_IDetGrona.xml")
 return
-edrama:relation-graph($doc//tei:listPerson[not(parent::tei:listPerson)], $doc//tei:listRelation, <parameters><param name="output" value="graphml"/></parameters>)
+graphing:relation-graph($doc//tei:listPerson[not(parent::tei:listPerson)], $doc//tei:listRelation, <parameters><param name="output" value="graphml"/></parameters>)
 ```
