@@ -6,7 +6,7 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>exist-tei-graphing</name>
-    <description>Integrates eDrama visualization.</description>
+    <description>Integrates (TEI) Graphing dynamic visualization.</description>
     <organization>
         <name>The eXist-db Project</name>
         <url>http://exist-db.org/</url>
