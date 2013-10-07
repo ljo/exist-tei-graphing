@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="all" name="exist-tei-drama">
+<project default="all" name="exist-tei-graphing">
   <property file="local.build.properties"/>
   <property file="build.properties"/>
 
@@ -8,7 +8,7 @@
   </condition>
 
   <property name="project.version" value="0.1"/>
-  <property name="project.app" value="tei-drama"/>
+  <property name="project.app" value="tei-graphing"/>
   <property name="project.app.jar" value="${project.app}-${project.version}${git.commit}.jar"/>
   <property name="project.lib.version" value="0.1-SNAPSHOT"/>
   <property name="project.lib.jar" value="${project.app}-${project.version}-jar-with-dependencies.jar"/>

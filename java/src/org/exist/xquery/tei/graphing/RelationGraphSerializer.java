@@ -1,4 +1,4 @@
-package org.exist.xquery.tei.drama;
+package org.exist.xquery.tei.graphing;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -82,10 +82,10 @@ import org.exist.xmldb.XmldbURI;
 import org.exist.xquery.*;
 import org.exist.xquery.modules.ModuleUtils;
 import org.exist.xquery.value.*;
-import org.exist.xquery.tei.drama.Relation.RelationType;
-import org.exist.xquery.tei.drama.jung.JungRelationGraph;
-import org.exist.xquery.tei.drama.jung.JungRelationGraphEdge;
-import org.exist.xquery.tei.drama.jung.JungRelationGraphVertex;
+import org.exist.xquery.tei.graphing.Relation.RelationType;
+import org.exist.xquery.tei.graphing.jung.JungRelationGraph;
+import org.exist.xquery.tei.graphing.jung.JungRelationGraphEdge;
+import org.exist.xquery.tei.graphing.jung.JungRelationGraphVertex;
 
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;

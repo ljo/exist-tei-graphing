@@ -1,4 +1,4 @@
-package org.exist.xquery.tei.drama.jung;
+package org.exist.xquery.tei.graphing.jung;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -7,9 +7,9 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import org.exist.xquery.tei.drama.RelationGraph;
-import org.exist.xquery.tei.drama.Relation;
-import org.exist.xquery.tei.drama.Subject;
+import org.exist.xquery.tei.graphing.RelationGraph;
+import org.exist.xquery.tei.graphing.Relation;
+import org.exist.xquery.tei.graphing.Subject;
 
 /**
  * @author ljo

@@ -14,8 +14,8 @@ import module namespace templates="http://exist-db.org/xquery/templates";
  : The following modules provide functions which will be called by the 
  : templating.
  :)
-import module namespace config="http://exist-db.org/apps/tei-drama/config" at "config.xqm";
-import module namespace app="http://exist-db.org/apps/tei-drama/templates" at "app.xql";
+import module namespace config="http://exist-db.org/apps/tei-graphing/config" at "config.xqm";
+import module namespace app="http://exist-db.org/apps/tei-graphing/templates" at "app.xql";
 
 declare option exist:serialize "method=html5 media-type=text/html enforce-xhtml=yes";
 

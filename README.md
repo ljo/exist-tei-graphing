@@ -1,4 +1,52 @@
-exist-tei-drama
-===============
+exist-tei-graphing
+===========================
 
-Visualization for TEI drama et al, e.g. namesdates — Names, Dates, People, and Places
+Integrates (TEI) graphing through the jung2 library into eXist-db.
+
+## Compile and install
+
+1. clone the github repository: https://github.com/ljo/exist-tei-graphing
+2. edit local.build.properties and set exist.dir to point to your eXist-db install directory
+3. call "ant" in the directory to create a .xar
+4. upload the xar into eXist-db using the dashboard
+
+## Functions
+There are currently one main function:
+
+### edrama:relation-graph
+edrama:relation-graph($listPersons as element()+, $listRelations as element()+) 
+as node()
+
+Serializes a relation graph based on provided persons and relations. All other parameters use default values if empty.
+
+Parameters:
+    $listPersons+ 	The listPerson elements to create the graph from
+    $listRelations+ 	The listRelation elements to create the graph from
+Returns:
+    node() : The serialized relation graph, by default SVG, otherwise output-type.
+
+###edrama:relation-graph
+edrama:relation-graph($listPersons as element()+, $listRelations as element()+, 
+$configuration as element()) as node()
+
+Serializes a relation graph based on provided persons and relations. All other parameters use default values if empty.
+
+Parameters:
+    $listPersons+ 	The listPerson elements to create the graph from
+    $listRelations+ 	The listRelation elements to create the graph from
+    $configuration 	The configuration, currently output type, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt/parameters&gt;.
+Returns:
+    node() : The serialized relation graph, by default SVG, otherwise output-type.
+
+
+
+## Usage example
+
+```xquery
+xquery version "3.0";
+import module namespace edrama="http://exist-db.org/xquery/tei-graphing";
+declare namespace tei="http://www.tei-c.org/ns/1.0";
+let $doc := doc("/db/dramawebben/data/works/IndebetouH_IDetGrona/IndebetouH_IDetGrona.xml")
+return
+edrama:relation-graph($doc//tei:listPerson[not(parent::tei:listPerson)], $doc//tei:listRelation, <parameters><param name="output" value="graphml"/></parameters>)
+```

@@ -1,8 +1,8 @@
-package org.exist.xquery.tei.drama;
+package org.exist.xquery.tei.graphing;
 
 import java.util.Comparator;
 
-import org.exist.xquery.tei.drama.Relation.RelationType;
+import org.exist.xquery.tei.graphing.Relation.RelationType;
 
 /**
  * @author ljo

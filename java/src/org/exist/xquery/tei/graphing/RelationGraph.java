@@ -1,4 +1,4 @@
-package org.exist.xquery.tei.drama;
+package org.exist.xquery.tei.graphing;
 
 import java.util.List;
 import java.util.Set;

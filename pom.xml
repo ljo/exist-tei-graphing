@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
     <groupId>org.exist-db.xquery.apps</groupId>
-    <artifactId>exist-tei-drama</artifactId>
+    <artifactId>exist-tei-graphing</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>exist-tei-drama</name>
+    <name>exist-tei-graphing</name>
     <description>Integrates eDrama visualization.</description>
     <organization>
         <name>The eXist-db Project</name>
@@ -19,9 +19,9 @@
       </license>
     </licenses>
     <scm>
-      <connection>scm:git:git@github.com:ljo/exist-tei-drama.git</connection>
-      <developerConnection>scm:git:git@github.com:ljo/exist-tei-drama.git</developerConnection>
-      <url>git@github.com:ljo/exist-tei-drama.git</url>
+      <connection>scm:git:git@github.com:ljo/exist-tei-graphing.git</connection>
+      <developerConnection>scm:git:git@github.com:ljo/exist-tei-graphing.git</developerConnection>
+      <url>git@github.com:ljo/exist-tei-graphing.git</url>
     </scm>
     <developers>
       <developer>

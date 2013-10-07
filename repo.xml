@@ -7,7 +7,7 @@
     <license>GNU-GPLv3</license>
     <copyright>true</copyright>
     <type>application</type>
-    <target>tei-drama</target>
+    <target>tei-graphing</target>
     <prepare>pre-install.xql</prepare>
     <finish/>
 </meta>

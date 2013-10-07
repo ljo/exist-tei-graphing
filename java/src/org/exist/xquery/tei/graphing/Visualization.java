@@ -1,4 +1,4 @@
-package org.exist.xquery.tei.drama;
+package org.exist.xquery.tei.graphing;
 
 import java.awt.Dimension;
 import java.io.File;
@@ -45,7 +45,6 @@ import org.exist.collections.Collection;
 import org.exist.dom.BinaryDocument;
 import org.exist.dom.DocumentImpl;
 import org.exist.dom.QName;
-//import org.exist.memtree.DocumentBuilderReceiver;
 import org.exist.memtree.MemTreeBuilder;
 import org.exist.memtree.NodeImpl;
 import org.exist.security.PermissionDeniedException;
@@ -59,10 +58,10 @@ import org.exist.util.VirtualTempFile;
 import org.exist.xmldb.XmldbURI;
 import org.exist.xquery.*;
 import org.exist.xquery.modules.ModuleUtils;
-import org.exist.xquery.tei.TEIDramaModule;
-import org.exist.xquery.tei.drama.jung.JungRelationGraph;
-import org.exist.xquery.tei.drama.jung.JungRelationGraphVertex;
-import org.exist.xquery.tei.drama.jung.JungRelationGraphEdge;
+import org.exist.xquery.tei.TEIGraphingModule;
+import org.exist.xquery.tei.graphing.jung.JungRelationGraph;
+import org.exist.xquery.tei.graphing.jung.JungRelationGraphVertex;
+import org.exist.xquery.tei.graphing.jung.JungRelationGraphEdge;
 import org.exist.xquery.value.*;
 
 import org.w3c.dom.DOMImplementation;
@@ -72,7 +71,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /** 
- * Creates RelationGraph presentations out of the TEI drama texts.
+ * Creates RelationGraph presentations out of TEI encoded texts.
  *
  * @author ljo
  */
@@ -81,42 +80,30 @@ public class Visualization extends BasicFunction {
     
     public final static FunctionSignature signatures[] = {
         new FunctionSignature(
-                              new QName("relation-graph", TEIDramaModule.NAMESPACE_URI, TEIDramaModule.PREFIX),
-                              "Serializes a relation graph based on provided persons and relations. All other parameters use default values if empty.",
+                              new QName("relation-graph", TEIGraphingModule.NAMESPACE_URI, TEIGraphingModule.PREFIX),
+                              "Serializes a relation graph based on provided persons and relations. All other parameters use default values.",
                               new SequenceType[] {
                                   new FunctionParameterSequenceType("listPersons", Type.ELEMENT, Cardinality.ONE_OR_MORE,
-                                                                    "The listPerson elements to create the graph from"),
+                                                                    "The tei:listPerson elements to create the graph from"),
                                   new FunctionParameterSequenceType("listRelations", Type.ELEMENT, Cardinality.ONE_OR_MORE,
-                                                                    "The listRelation elements to create the graph from")
+                                                                    "The tei:listRelation elements to create the graph from")
                               },
                               new FunctionReturnSequenceType(Type.NODE, Cardinality.EXACTLY_ONE,
-                                                             "The serialized relation graph, by default SVG, otherwise output-type.")
+                                                             "The serialized relation graph in default SVG output-type.")
                               ),
         new FunctionSignature(
-                              new QName("relation-graph", TEIDramaModule.NAMESPACE_URI, TEIDramaModule.PREFIX),
+                              new QName("relation-graph", TEIGraphingModule.NAMESPACE_URI, TEIGraphingModule.PREFIX),
                               "Serializes a relation graph based on provided persons and relations. All other parameters use default values if empty.",
                               new SequenceType[] {
                                   new FunctionParameterSequenceType("listPersons", Type.ELEMENT, Cardinality.ONE_OR_MORE,
-                                                                    "The listPerson elements to create the graph from"),
+                                                                    "The tei:listPerson elements to create the graph from"),
                                   new FunctionParameterSequenceType("listRelations", Type.ELEMENT, Cardinality.ONE_OR_MORE,
-                                                                    "The listRelation elements to create the graph from"),
+                                                                    "The tei:listRelation elements to create the graph from"),
                                   new FunctionParameterSequenceType("configuration", Type.ELEMENT, Cardinality.EXACTLY_ONE,
-                                                                    "The configuration, currently output type, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt/parameters&gt;.")
+                                                                    "The configuration, currently only output type, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt/parameters&gt;. Values for 'output' can be 'svg' or 'graphml'.")
                               },
                               new FunctionReturnSequenceType(Type.NODE, Cardinality.EXACTLY_ONE,
-                                                             "The serialized relation graph, by default SVG, otherwise output-type.")
-                              ),
-        new FunctionSignature(
-                              new QName("relation-graph-stored", TEIDramaModule.NAMESPACE_URI, TEIDramaModule.PREFIX),
-                              "Serializes a relation graph. All other parameters use default values if empty.",
-                              new SequenceType[] {
-                                  new FunctionParameterSequenceType("relation-graph-doc", Type.ANY_URI, Cardinality.EXACTLY_ONE,
-                                                                    "The path within the database to the serialized relation graph document to use"),
-                                  new FunctionParameterSequenceType("tei-doc", Type.ANY_URI, Cardinality.EXACTLY_ONE,
-                                                                    "The path within the database to the tei document to use")
-                              },
-                              new FunctionReturnSequenceType(Type.NODE, Cardinality.ONE_OR_MORE,
-                                                             "The serialized relation graph, by default SVG, otherwise output-type.")
+                                                             "The serialized relation graph.")
                               )
     };
 
