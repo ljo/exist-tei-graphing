@@ -13,31 +13,30 @@ Integrates (TEI) graphing through the jung2 and batik libraries into eXist-db.
 ## Functions
 There are currently one main function:
 
-### graphing:relation-graph
-graphing:relation-graph($listPersons as element()+, $listRelations as element()+) 
-as node()
+#graphing:relation-graph
+graphing:relation-graph($listPersons as element()+, $listRelations as element
+()+) as node()
+
+Serializes a relation graph based on provided persons and relations. All other parameters use default values.
+
+Parameters:
+    $listPersons+ 	The tei:listPerson elements to create the graph from
+    $listRelations+ 	The tei:listRelation elements to create the graph from
+Returns:
+    node() : The serialized relation graph in default SVG output-type.
+
+#graphing:relation-graph
+graphing:relation-graph($listPersons as element()+, $listRelations as element
+()+, $configuration as element()) as node()
 
 Serializes a relation graph based on provided persons and relations. All other parameters use default values if empty.
 
 Parameters:
-    $listPersons+ 	The listPerson elements to create the graph from
-    $listRelations+ 	The listRelation elements to create the graph from
+    $listPersons+ 	The tei:listPerson elements to create the graph from
+    $listRelations+ 	The tei:listRelation elements to create the graph from
+    $configuration 	The configuration, currently only output type, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt/parameters&gt;. Values for 'output' can be 'svg' or 'graphml'.
 Returns:
-    node() : The serialized relation graph, by default SVG, otherwise output-type.
-
-###graphing:relation-graph
-graphing:relation-graph($listPersons as element()+, $listRelations as element()+, 
-$configuration as element()) as node()
-
-Serializes a relation graph based on provided persons and relations. All other parameters use default values if empty.
-
-Parameters:
-    $listPersons+ 	The listPerson elements to create the graph from
-    $listRelations+ 	The listRelation elements to create the graph from
-    $configuration 	The configuration, currently output type, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt/parameters&gt;.
-Returns:
-    node() : The serialized relation graph, by default SVG, otherwise output-type.
-
+    node() : The serialized relation graph.
 
 
 ## Usage example
