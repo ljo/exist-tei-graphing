@@ -34,7 +34,7 @@ Serializes a relation graph based on provided persons and relations. All other p
 Parameters:
     $listPersons+ 	The tei:listPerson elements to create the graph from
     $listRelations+ 	The tei:listRelation elements to create the graph from
-    $configuration 	The configuration, currently only output type, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt/parameters&gt;. Values for 'output' can be 'svg' or 'graphml'.
+    $configuration 	The configuration, currently only output type, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt;/parameters&gt;. Values for 'output' can be 'svg' or 'graphml'.
 Returns:
     node() : The serialized relation graph.
 

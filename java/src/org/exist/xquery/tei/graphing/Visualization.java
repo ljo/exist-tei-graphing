@@ -100,7 +100,7 @@ public class Visualization extends BasicFunction {
                                   new FunctionParameterSequenceType("listRelations", Type.ELEMENT, Cardinality.ONE_OR_MORE,
                                                                     "The tei:listRelation elements to create the graph from"),
                                   new FunctionParameterSequenceType("configuration", Type.ELEMENT, Cardinality.EXACTLY_ONE,
-                                                                    "The configuration, currently only output type, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt/parameters&gt;. Values for 'output' can be 'svg' or 'graphml'.")
+                                                                    "The configuration, currently only output type, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt;/parameters&gt;. Values for 'output' can be 'svg' or 'graphml'.")
                               },
                               new FunctionReturnSequenceType(Type.NODE, Cardinality.EXACTLY_ONE,
                                                              "The serialized relation graph.")
