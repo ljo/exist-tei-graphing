@@ -124,9 +124,7 @@ public class RelationGraphSerializer {
     private static final String SOURCE_ATT = "source";
     private static final String DIRECTED_ATT = "directed";
     private static final String EDGE_ELEM = "edge";
-    private static final String EDGE_TYPE_PATH = "path";
-    private static final String EDGE_TYPE_TRANSPOSITION = "transposition";
-    private static final String EDGEDEFAULT_DEFAULT_VALUE = "directed";
+    private static final String EDGEDEFAULT_DEFAULT_VALUE = "undirected";
     private static final String EDGEDEFAULT_ATT = "edgedefault";
 
     private static final String PARSENODEIDS_ATT = "parse.nodeids";
@@ -206,7 +204,7 @@ public class RelationGraphSerializer {
             
             builder.addAttribute(new QName(TARGET_ATT, null, null), String.valueOf("n" + numericId(edge.to())));
             GraphMLProperty.EDGE_NUMBER.write(Integer.toString(edgeNumber++), builder);
-            GraphMLProperty.EDGE_TYPE.write(EDGE_TYPE_PATH, builder);
+            GraphMLProperty.EDGE_TYPE.write(Relation.getType(edge), builder);
             GraphMLProperty.EDGE_RELATION.write(Relation.getVerb(edge), builder);
             builder.endElement();
         }
