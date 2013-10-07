@@ -186,6 +186,7 @@ public class RelationGraphSerializer {
         
         for (RelationGraph.Vertex vertex : relationGraph.vertices()) {
             final int id = numericId(vertex);
+            LOG.debug("GraphML vertex #: " + id);
             builder.startElement(new QName(NODE_ELEM, GRAPHML_NS, GRAPHML_PREFIX), null);
             builder.addAttribute(new QName(ID_ATT, null, null), String.valueOf("n" + id));
             GraphMLProperty.NODE_NUMBER.write(Integer.toString(id), builder);
@@ -195,6 +196,7 @@ public class RelationGraphSerializer {
         
         int edgeNumber = 0;
         for (RelationGraph.Edge edge : relationGraph.edges()) {
+            LOG.debug("GraphML edge #: " + edgeNumber);
             builder.startElement(new QName(EDGE_ELEM, GRAPHML_NS, GRAPHML_PREFIX), null);
             builder.addAttribute(new QName(ID_ATT, null, null), String.valueOf("e" + edgeNumber));
             builder.addAttribute(new QName(SOURCE_ATT, null, null), String.valueOf("n" + numericId(edge.from())));

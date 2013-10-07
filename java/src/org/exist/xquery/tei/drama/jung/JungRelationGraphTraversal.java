@@ -1,11 +1,14 @@
 package org.exist.xquery.tei.drama.jung;
 
 import java.util.ArrayDeque;
-import static java.util.Collections.singleton;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 import org.exist.xquery.tei.drama.Relation;
 import org.exist.xquery.tei.drama.RelationGraph;
@@ -14,6 +17,7 @@ import org.exist.xquery.tei.drama.RelationGraph;
  * @author ljo
  */
 public class JungRelationGraphTraversal implements Iterable<RelationGraph.Vertex> {
+    private final static Logger LOG = Logger.getLogger(JungRelationGraphTraversal.class);
     private final RelationGraph relationGraph;
     private final Set<Relation> relations;
 
@@ -30,12 +34,12 @@ public class JungRelationGraphTraversal implements Iterable<RelationGraph.Vertex
         return new JungRelationGraphTraversal(relationGraph, relations);
     }
 
-    public Iterator<RelationGraph.Vertex> iterator() {        
-        Iterator<RelationGraph.Vertex> rgv = relationGraph.vertices().iterator();
-        return rgv; 
+    public Iterator<RelationGraph.Vertex> iterator() {
+        Iterator <RelationGraph.Vertex> rgv = relationGraph.verticesList().iterator();
+        return rgv;
     }
 
     public Iterable<RelationGraph.Edge> edges() {
-        return relationGraph.edges();
+        return relationGraph.edgesList();
     }
 }

@@ -26,12 +26,16 @@ public interface RelationGraph {
     Iterable<Vertex> vertices();
 
     Iterable<Vertex> vertices(Set<Relation> relations);
-    
+
+    List<Vertex> verticesList();
+
     int vertexCount();
 
     Iterable<Edge> edges();
 
     Iterable<Edge> edges(Set<Relation> relations);
+
+    List<Edge> edgesList();
 
     int edgeCount();
 
