@@ -54,6 +54,8 @@ public interface RelationGraph {
 
         Vertex to();
 
+        boolean directed();
+
         void delete();
 
         Relation relation();

@@ -122,6 +122,7 @@ public class RelationGraphSerializer {
     private static final String NODE_ELEM = "node";
     private static final String TARGET_ATT = "target";
     private static final String SOURCE_ATT = "source";
+    private static final String DIRECTED_ATT = "directed";
     private static final String EDGE_ELEM = "edge";
     private static final String EDGE_TYPE_PATH = "path";
     private static final String EDGE_TYPE_TRANSPOSITION = "transposition";
@@ -199,6 +200,8 @@ public class RelationGraphSerializer {
             LOG.debug("GraphML edge #: " + edgeNumber);
             builder.startElement(new QName(EDGE_ELEM, GRAPHML_NS, GRAPHML_PREFIX), null);
             builder.addAttribute(new QName(ID_ATT, null, null), String.valueOf("e" + edgeNumber));
+            builder.addAttribute(new QName(DIRECTED_ATT, null, null), String.valueOf(edge.directed()));
+
             builder.addAttribute(new QName(SOURCE_ATT, null, null), String.valueOf("n" + numericId(edge.from())));
             
             builder.addAttribute(new QName(TARGET_ATT, null, null), String.valueOf("n" + numericId(edge.to())));

@@ -3,6 +3,8 @@ package org.exist.xquery.tei.drama.jung;
 import java.util.Collections;
 import java.util.Set;
 
+import edu.uci.ics.jung.graph.util.EdgeType;
+
 import org.apache.log4j.Logger;
 
 import org.exist.xquery.tei.drama.RelationGraph;
@@ -40,6 +42,11 @@ public class JungRelationGraphEdge implements RelationGraph.Edge {
     @Override
     public RelationGraph.Vertex to() {
         return graph.getEndpoints(this).getSecond();
+    }
+
+   @Override
+   public boolean directed() {
+       return EdgeType.valueOf("DIRECTED").equals(graph.getEdgeType(this));
     }
 
     @Override
