@@ -370,6 +370,10 @@ public class Visualization extends BasicFunction {
             //next personChild node
             personChild = personChild.getNextSibling();    
         }
+        if ("unknown".equals(persName)) {
+            persName = persId;
+        }
+
         LOG.info("parsePersons::" + persId +":"+ persName +":"+ type +":"+ sex +":"+ age +":"+ occupation);
         
         if (sortKey != null) {
@@ -434,6 +438,11 @@ public class Visualization extends BasicFunction {
             //next personChild node
             orgChild = orgChild.getNextSibling();    
         }
+
+        if ("unknown".equals(orgName)) {
+            orgName = orgId;
+        }
+
         LOG.info("parseOrgs::" + orgId +":"+ orgName +":"+ type);
         
         if (sortKey != null) {
