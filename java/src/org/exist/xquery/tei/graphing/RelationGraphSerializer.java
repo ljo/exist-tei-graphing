@@ -334,8 +334,12 @@ public class RelationGraphSerializer {
             @Override
             public Shape transform(JungRelationGraphVertex vm) {
                 int sl = vm.toString().length() * 6;
+                if (vm.subject() instanceof OrgSubject) {
+                    return new Rectangle(-25, -10, 50 + sl, 20);
+                } else {
+                    return new Ellipse2D.Double(-25, -10, 50 + sl, 20);
+                }
                 
-                return new Ellipse2D.Double(-25, -10, 50 + sl, 20);
             }
         };
         vis.getRenderContext().setVertexShapeTransformer(vertexShape);

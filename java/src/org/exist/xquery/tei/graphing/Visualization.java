@@ -138,8 +138,8 @@ public class Visualization extends BasicFunction {
             vertexFromSubjectId.clear();
             if (!args[0].isEmpty()) {
                 for (int i = 0; i < args[0].getItemCount(); i++) {
-                    LOG.debug("Adding listPerson #: " + i);
-                    parseListPersons(((NodeValue)args[0].itemAt(i)).getNode());
+                    LOG.debug("Adding listPerson/listOrg #: " + i);
+                    parseNamesDates(((NodeValue)args[0].itemAt(i)).getNode());
                 }
             }
             LOG.info("Number of Subjects (vertices):" +vertexFromSubjectId.size());
@@ -200,6 +200,16 @@ public class Visualization extends BasicFunction {
        return cachedRelationGraph;
        } */
 
+    public void parseNamesDates(Node listNamesDates) throws XPathException {
+        if (listNamesDates.getNodeType() == Node.ELEMENT_NODE && listNamesDates.getLocalName().equals("listPerson") && listNamesDates.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
+            parseListPersons(listNamesDates);
+        }
+        
+        if (listNamesDates.getNodeType() == Node.ELEMENT_NODE && listNamesDates.getLocalName().equals("listOrg") && listNamesDates.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
+            parseListOrgs(listNamesDates);
+        }
+    }
+
     public void parseListPersons(Node listPerson) throws XPathException {
         String type = "unknown";
         String persId = "unknown";
@@ -233,6 +243,36 @@ public class Visualization extends BasicFunction {
         }
     }
 
+    public void parseListOrgs(Node listOrg) throws XPathException {
+        String type = "unknown";
+        String orgId = "unknown";
+        String orgName = "unknown";
+        
+        if (listOrg.getNodeType() == Node.ELEMENT_NODE && listOrg.getLocalName().equals("listOrg") && listOrg.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
+            NamedNodeMap attrs = listOrg.getAttributes();
+            if (attrs.getLength() > 0) {
+                type = attrs.getNamedItem("type").getNodeValue();
+            }
+            //Get the listOrg children
+            Node child = listOrg.getFirstChild();
+            while (child != null) {
+                //Parse each of the child nodes org/listOrg
+                if (child.getNodeType() == Node.ELEMENT_NODE && child.hasChildNodes()) {
+                    if (child.getLocalName().equals("org") &&
+                        child.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
+                        
+                        parseOrgs(child, type);
+                    } else if (child.getLocalName().equals("listOrg") &&
+                               child.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
+                        parseListOrgGroup(child, type);
+                    }
+                }
+                //next org/listOrg node
+                child = child.getNextSibling();
+            }
+        }
+    }
+
     public void parsePersons(Node child, String type) throws XPathException {
         String persId = "unknown";
         String persName = "unknown";
@@ -249,7 +289,7 @@ public class Visualization extends BasicFunction {
                 try {
                     persId = persAttrs.getNamedItem("sameAs").getNodeValue().substring(1);
                 } catch (NullPointerException e2) {
-                    LOG.error("Element personGrp is missing xml:id-attribute and  has no sameAs-attribute.");
+                    LOG.error("An element 'person' or 'personGrp' is missing xml:id attribute and has no sameAs attribute.");
                 }
             }
             if (persAttrs.getNamedItem("sex") != null && !"".equals(persAttrs.getNamedItem("sex").getNodeValue())) {
@@ -268,7 +308,7 @@ public class Visualization extends BasicFunction {
                 //parsePersonChildren(personChild, persName, sex, age, occupation);
                 if (personChild.getLocalName().equals("persName")) {
             
-                    String value = personChild.getFirstChild().getNodeValue();
+                    String value = personChild.getNodeValue(); // personChild.getFirstChild().getNodeValue();
                     if (value == null) {
                         throw new XPathException("Value for 'persName' cannot be parsed");
                     } else {
@@ -355,6 +395,59 @@ public class Visualization extends BasicFunction {
             }
         }
     }
+
+    public void parseOrgs(Node child, String type) throws XPathException {
+        String orgId = "unknown";
+        String orgName = "unknown";
+        String sortKey = "";
+        int weight = 1;
+        NamedNodeMap orgAttrs = child.getAttributes();
+        if (orgAttrs.getLength() > 0) {
+            try {
+                orgId = orgAttrs.getNamedItemNS(Namespaces.XML_NS, "id").getNodeValue();
+            } catch (NullPointerException e1) {
+                try {
+                    orgId = orgAttrs.getNamedItem("sameAs").getNodeValue().substring(1);
+                } catch (NullPointerException e2) {
+                    LOG.error("An element 'org' is missing xml:id attribute and has no sameAs attribute.");
+                }
+            }
+            if (orgAttrs.getNamedItem("sortKey") != null && !"".equals(orgAttrs.getNamedItem("sortKey").getNodeValue())) {
+                sortKey = orgAttrs.getNamedItem("sortKey").getNodeValue();
+            }
+        }
+        //Get the org child nodes
+        Node orgChild = child.getFirstChild();
+        while (orgChild != null) {
+            //Parse each of the orgChild nodes
+            if (orgChild.getNodeType() == Node.ELEMENT_NODE && orgChild.hasChildNodes()) {
+                if (orgChild.getLocalName().equals("orgName")) {
+            
+                    String value = orgChild.getFirstChild().getNodeValue();
+                    if (value == null) {
+                        throw new XPathException("Value for 'orgName' cannot be parsed");
+                    } else {
+                        orgName = value;
+                    }
+                }
+            }
+            //next personChild node
+            orgChild = orgChild.getNextSibling();    
+        }
+        LOG.info("parseOrgs::" + orgId +":"+ orgName +":"+ type);
+        
+        if (sortKey != null) {
+            try {
+                weight = Integer.parseInt(sortKey);
+                vertexFromSubjectId.put(orgId, relationGraph.add(new WeightedOrgSubject(orgId, orgName, type, weight)));
+            } catch (NumberFormatException e) {
+                vertexFromSubjectId.put(orgId, relationGraph.add(new OrgSubject(orgId, orgName, type)));
+            }
+        } else {
+            vertexFromSubjectId.put(orgId, relationGraph.add(new OrgSubject(orgId, orgName, type)));
+        }
+    }
+
 
     public void parsePersonChildren(Node personChild, String persName, String sex, String age, String occupation) throws XPathException {
         if (personChild.getLocalName().equals("persName")) {
@@ -470,6 +563,27 @@ public class Visualization extends BasicFunction {
             }
             //next listPersonChild node
             listPersonChild = listPersonChild.getNextSibling();
+        }
+    }
+
+    public void parseListOrgGroup(Node child, String type) throws XPathException {
+        //Get the listOrg/listOrg child nodes
+        Node listOrgChild = child.getFirstChild();
+        while (listOrgChild != null) {
+            String orgId = "unknown";
+            String orgName = "unknown";
+
+            //Parse each of the listOrgChild nodes
+            if (listOrgChild.getNodeType() == Node.ELEMENT_NODE && listOrgChild.hasChildNodes()) {
+                
+                if (listOrgChild.getLocalName().equals("org") &&
+                    listOrgChild.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
+                    LOG.info("listOrg/listOrg/org");
+                    parseOrgs(listOrgChild, type);
+                }
+            }
+            //next listPersonChild node
+            listOrgChild = listOrgChild.getNextSibling();
         }
     }
 
