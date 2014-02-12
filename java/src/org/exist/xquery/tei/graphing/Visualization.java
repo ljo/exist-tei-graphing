@@ -648,9 +648,13 @@ public class Visualization extends BasicFunction {
                                 
                                 active = getIds(relAttrs.getNamedItem("active").getNodeValue());
 
+                                if (relAttrs.getNamedItem("passive") != null && !"".equals(relAttrs.getNamedItem("passive").getNodeValue())) { 
                                 passive = getIds(relAttrs.getNamedItem("passive").getNodeValue());
                                 LOG.info("parseListRelations::activePassive: " + relType +":"+ name);
                                 connectActivePassive(relType, name, active, passive);
+				} else {
+				LOG.error("parseListRelations::activePassive - @active without @passive: " + relType + ":" + name);
+				}
                             }
                         }
                     }
