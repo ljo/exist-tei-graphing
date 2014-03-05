@@ -529,13 +529,16 @@ public class Visualization extends BasicFunction {
                     while (grpChild != null) {
                         //parsePersonChildren(grpChild, persName, sex, age, occupation);
                         if (grpChild.getLocalName().equals("persName")) {
-            
-                            String value = grpChild.getFirstChild().getNodeValue();
-                            if (value == null) {
-                                throw new XPathException("Value for 'persName' cannot be parsed");
-                            } else {
-                                persName = value;
-                            }
+            		    if (grpChild.getFirstChild() != null) {
+                               String value = grpChild.getFirstChild().getNodeValue();
+                               if (value == null) {
+                               	   throw new XPathException("Value for 'persName' cannot be parsed");
+                               } else {
+     			           persName = value;
+                               }
+			    } else {
+			      LOG.error("No value for 'persName' for persId: " + persId);
+			    }
                         } else if (grpChild.getLocalName().equals("occupation")) {
                             String value = grpChild.getFirstChild().getNodeValue();
                             if (value == null) {
