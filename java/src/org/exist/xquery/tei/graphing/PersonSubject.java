@@ -214,7 +214,8 @@ public class PersonSubject implements Subject, Comparator<PersonSubject> {
 	if ("".equals(name)) {
 	    return id;
 	}
-	return name;
+    // fixme! - Make this selectable
+	return id; // name;
     } 
 
     @Override
