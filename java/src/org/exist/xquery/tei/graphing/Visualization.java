@@ -504,7 +504,10 @@ public class Visualization extends BasicFunction {
             String occupation = "unknown";
 
             //Parse each of the listPersonChild nodes
-            if (listPersonChild.getNodeType() == Node.ELEMENT_NODE && listPersonChild.hasChildNodes()) {
+	    if (listPersonChild.getLocalName().equals("listPerson") &&
+                               listPersonChild.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
+		parseListPersonGroup(listPersonChild, type);
+	    } else if (listPersonChild.getNodeType() == Node.ELEMENT_NODE && listPersonChild.hasChildNodes()) {
                 if (listPersonChild.getLocalName().equals("personGrp") &&
                     listPersonChild.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
                     LOG.info("listPerson/listPerson/personGrp");
