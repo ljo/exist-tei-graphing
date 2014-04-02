@@ -153,11 +153,11 @@ public class RelationGraphSerializer {
     }
     
     
-    public ValueSequence relationGraphReport(final String outputFormat) throws XPathException {
+    public ValueSequence relationGraphReport(final String outputFormat, final int numberOfVertices) throws XPathException {
         ValueSequence result = new ValueSequence();
         if ("svg".equals(outputFormat)) {
             LOG.info(relationGraph.toString());
-            result.add(toSvg((JungRelationGraph) relationGraph));
+            result.add(toSvg((JungRelationGraph) relationGraph, numberOfVertices));
         } else {
             final MemTreeBuilder builder = context.getDocumentBuilder();
             builder.startDocument();
@@ -247,8 +247,11 @@ public class RelationGraphSerializer {
         }
     }
 
-    public NodeValue toSvg(JungRelationGraph jvg) throws XPathException {
+    public NodeValue toSvg(JungRelationGraph jvg, final int numberOfVertices) throws XPathException {
         Dimension dimension = new Dimension(960, 600);
+	if (numberOfVertices > 27) {
+	    dimension = new Dimension(1200, 800);
+	}
         NodeValue nv = null;
         try {
             // Get a DOMImplementation and create an XML document

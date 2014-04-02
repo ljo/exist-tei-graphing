@@ -159,7 +159,7 @@ public class Visualization extends BasicFunction {
                 }           
             }
             RelationGraphSerializer rgs = new RelationGraphSerializer(context, relationGraph);
-            return rgs.relationGraphReport(parameters.getProperty("output"));
+            return rgs.relationGraphReport(parameters.getProperty("output"), +vertexFromSubjectId.size());
         } finally {
             context.popDocumentContext();
         }
