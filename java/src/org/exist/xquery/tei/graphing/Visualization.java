@@ -315,9 +315,15 @@ public class Visualization extends BasicFunction {
                         persName = value;
                     }
                 } else if (personChild.getLocalName().equals("occupation")) {
-                    String value = personChild.getFirstChild().getNodeValue();
-                    if (value == null) {
+		    String value = null;
+                    try {
+			value = personChild.getFirstChild().getNodeValue();
+                    } catch (NullPointerException npe) {
+                        LOG.error("Element 'occupation' is missing text node value.");
+                    } catch (Exception e) {
                         throw new XPathException("Value for 'occupation' cannot be parsed");
+                    }
+                    if (value == null) {
                     } else {
                         occupation = value;
                     }
