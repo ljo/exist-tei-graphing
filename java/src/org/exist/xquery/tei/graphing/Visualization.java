@@ -474,27 +474,44 @@ public class Visualization extends BasicFunction {
                 persName = value;
             }
         } else if (personChild.getLocalName().equals("occupation")) {
-            String value = personChild.getFirstChild().getNodeValue();
-            if (value == null) {
-                throw new XPathException("Value for 'occupation' cannot be parsed");
-            } else {
-                occupation = value;
-            }
+	    String value = null;
+	    try {
+		value = personChild.getFirstChild().getNodeValue();
+	    } catch (NullPointerException npe) {
+		LOG.error("Element 'occupation' is missing text node value.");
+	    } catch (Exception e) {
+		throw new XPathException("Value for 'occupation' cannot be parsed");
+	    }
+	    if (value == null) {
+	    } else {
+		occupation = value;
+	    }
         } else if (personChild.getLocalName().equals("sex")) {
-            String value = personChild.getFirstChild().getNodeValue();
-            if (value == null) {
-                throw new XPathException("Value for 'sex' cannot be parsed");
-            } else {
-                sex = value;
-            }
-            
+	    String value = null;
+	    try {
+		value = personChild.getFirstChild().getNodeValue();
+	    } catch (NullPointerException npe) {
+		LOG.error("Element 'sex' is missing text node value.");
+	    } catch (Exception e) {
+		throw new XPathException("Value for 'sex' cannot be parsed");
+	    }
+	    if (value == null) {
+	    } else {
+		sex = value;
+	    }
         } else if (personChild.getLocalName().equals("age")) {
-            String value = personChild.getFirstChild().getNodeValue();
-            if (value == null) {
-                throw new XPathException("Value for 'age' cannot be parsed");
-            } else {
-                age = value;
-            }
+            String value = null;
+	    try {
+		value = personChild.getFirstChild().getNodeValue();
+	    } catch (NullPointerException npe) {
+		LOG.error("Element 'age' is missing text node value.");
+	    } catch (Exception e) {
+		throw new XPathException("Value for 'age' cannot be parsed");
+	    }
+	    if (value == null) {
+	    } else {
+		age = value;
+	    }
         }                            
     }
 
