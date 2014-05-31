@@ -160,9 +160,11 @@ public class JungRelationGraph extends SparseMultigraph<JungRelationGraphVertex,
     @Override
         public Set<Relation> relations() {
         Set<Relation> relations = new HashSet();
-        for (Edge edge : start.outgoing()) {
-            relations.add(edge.relation());
-        }
+	if (start != null) {
+	    for (Edge edge : start.outgoing()) {
+		relations.add(edge.relation());
+	    }
+	}
         return relations;
     }
 
