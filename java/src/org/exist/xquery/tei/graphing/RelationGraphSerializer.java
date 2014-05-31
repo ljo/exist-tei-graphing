@@ -156,7 +156,7 @@ public class RelationGraphSerializer {
     public ValueSequence relationGraphReport(final String outputFormat, final int numberOfVertices) throws XPathException {
         ValueSequence result = new ValueSequence();
         if ("svg".equals(outputFormat)) {
-            LOG.info(relationGraph.toString());
+            //LOG.info(relationGraph.toString());
             result.add(toSvg((JungRelationGraph) relationGraph, numberOfVertices));
         } else {
             final MemTreeBuilder builder = context.getDocumentBuilder();

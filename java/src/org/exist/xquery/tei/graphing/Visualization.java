@@ -142,7 +142,7 @@ public class Visualization extends BasicFunction {
                     parseNamesDates(((NodeValue)args[0].itemAt(i)).getNode());
                 }
             }
-            LOG.info("Number of Subjects (vertices):" +vertexFromSubjectId.size());
+            LOG.info("Number of Subjects (vertices):" + vertexFromSubjectId.size());
             
             if (!args[1].isEmpty()) {
                 for (int i = 0; i < args[1].getItemCount(); i++) {
@@ -150,16 +150,16 @@ public class Visualization extends BasicFunction {
                     parseListRelations(((NodeValue)args[1].itemAt(i)).getNode());
                 }
             }
-            LOG.info("Number of Relations (edges):" +relationGraph.edgeCount());
+            LOG.info("Number of Relations (edges):" + relationGraph.edgeCount());
              
             if (isCalledAs("relation-graph")
                 && getSignature().getArgumentCount() == 3) {
                 if (!args[2].isEmpty()) {
                     parameters = ModuleUtils.parseParameters(((NodeValue)args[2].itemAt(0)).getNode());
-                }           
+                }
             }
             RelationGraphSerializer rgs = new RelationGraphSerializer(context, relationGraph);
-            return rgs.relationGraphReport(parameters.getProperty("output"), +vertexFromSubjectId.size());
+            return rgs.relationGraphReport(parameters.getProperty("output"), vertexFromSubjectId.size());
         } finally {
             context.popDocumentContext();
         }
