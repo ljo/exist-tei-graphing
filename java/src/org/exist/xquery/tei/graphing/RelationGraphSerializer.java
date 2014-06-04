@@ -249,7 +249,9 @@ public class RelationGraphSerializer {
 
     public NodeValue toSvg(JungRelationGraph jvg, final int numberOfVertices) throws XPathException {
         Dimension dimension = new Dimension(960, 600);
-	if (numberOfVertices > 27) {
+	if (numberOfVertices > 55) {
+	    dimension = new Dimension(1600, 1000);
+	} else if (numberOfVertices > 27) {
 	    dimension = new Dimension(1200, 800);
 	}
         NodeValue nv = null;
