@@ -538,6 +538,7 @@ public class Visualization extends BasicFunction {
                     if (persGrpAttrs.getLength() > 0) {
                         try {
                             persId = persGrpAttrs.getNamedItemNS(Namespaces.XML_NS, "id").getNodeValue();
+			    //LOG.info("Element 'personGrp' xml:id-attribute: " + persId);
                         } catch (NullPointerException e) {
                             try {
                                 persId = persGrpAttrs.getNamedItem("sameAs").getNodeValue().substring(1);
@@ -591,8 +592,9 @@ public class Visualization extends BasicFunction {
                         //next person/listPerson node
                         grpChild = grpChild.getNextSibling();
                     }
-                    LOG.info("parseListPersons::personGrp: " + persId +":"+ persName == "unknown" ? persId : persName +":"+ type +":"+ sex +":"+ age +":"+ occupation);
-                    vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName == "unknown" ? persId : persName, type, sex, age, occupation, true)));
+		    final String nameOrId = "unknown".equals(persName) ? persId : persName;
+                    LOG.info("parseListPersons::personGrp: " + persId + ":" + nameOrId +":"+ type +":"+ sex +":"+ age +":"+ occupation);
+                    vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, nameOrId, type, sex, age, occupation, true)));
                 } else if (listPersonChild.getLocalName().equals("person") &&
                            listPersonChild.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
                     LOG.info("listPerson/listPerson/person");
