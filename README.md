@@ -12,26 +12,26 @@ Integrates (TEI) graphing through the jung2 and batik libraries into eXist-db.
 
 ## Overview
 We combine parts of the TEI namesdates module, like
-<listPerson> and <listOrg> with relations in
-<listRelation> elements to create graphs of relations
+&lt;listPerson&gt; and &lt;listOrg&gt; with relations in
+&lt;listRelation&gt; elements to create graphs of relations
 between persons (cast and non-cast) and orgs or interaction
 on stage (cast only) sociograms.
 
 ### Personal/organisational relations
-Every <person> or <org> element can have zero
+Every &lt;person&gt; or &lt;org&gt; element can have zero
 to many relations based on IDREF.
 
-if 'svg' (SVG) is used as output type we differentiate 
+if "svg" (SVG) is used as output type we differentiate 
 between persons and organisations in the graphs
-by making the <person> nodes elliptic and the <org> ones
+by making the &lt;person&gt; nodes elliptic and the &lt;org&gt; ones
 rectangular.
 
 Similarily cast persons have a solid node outline while
 non-cast persons have a dashed outline. This
 is based on the @type attribute on the outmost 
-ancestor <listPerson> elements. 
+ancestor &lt;listPerson&gt; elements. 
 
-We have followed the default of three <relation>
+We have followed the default of three &lt;relation&gt;
 @type values “personal”, “social”, and “other”.
 These are represented by dashed, solid, and
 dotted edges respectively.
@@ -42,20 +42,20 @@ be created based on any criteria of what
 constitutes interaction in your project.
 
 These can also be weighted by giving a numeric
-value to the @sortKey attribute of the <relation>
+value to the @sortKey attribute of the &lt;relation&gt;
 element.
 
 Of course you can also create other types of
 graphs based on dynamic data.
 
 ## Functions
-There are currently one main function:
+There is currently one main function:
 
 ###graphing:relation-graph
 graphing:relation-graph($listPersons as element()+, $listRelations as element
 ()+) as node()
 
-Serializes a relation graph based on provided persons and relations. All other parameters use default values.
+Serializes a relation graph based on provided persons/organisations and relations. All other parameters use default values.
 
 Parameters:
 
@@ -69,7 +69,7 @@ Returns:
 graphing:relation-graph($listPersons as element()+, $listRelations as element
 ()+, $configuration as element()) as node()
 
-Serializes a relation graph based on provided persons and relations. All other parameters use default values if empty.
+Serializes a relation graph based on provided persons/organisations and relations. All other parameters use default values if empty.
 
 Parameters:
 
