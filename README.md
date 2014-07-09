@@ -10,6 +10,44 @@ Integrates (TEI) graphing through the jung2 and batik libraries into eXist-db.
 3. call "ant" in the directory to create a .xar
 4. upload the xar into eXist-db using the dashboard
 
+## Overview
+We combine parts of the TEI namesdates module, like
+<listPerson> and <listOrg> with relations in
+<listRelation> elements to create graphs of relations
+between persons (cast and non-cast) and orgs or interaction
+on stage (cast only) sociograms.
+
+### Personal/organisational relations
+Every <person> or <org> element can have zero
+to many relations based on IDREF.
+
+if 'svg' (SVG) is used as output type we differentiate 
+between persons and organisations in the graphs
+by making the <person> nodes elliptic and the <org> ones
+rectangular.
+
+Similarily cast persons have a solid node outline while
+non-cast persons have a dashed outline. This
+is based on the @type attribute on the outmost 
+ancestor <listPerson> elements. 
+
+We have followed the default of three <relation>
+@type values “personal”, “social”, and “other”.
+These are represented by dashed, solid, and
+dotted edges respectively.
+
+### Sociograms
+Sociograms are created dynamically and can
+be created based on any criteria of what
+constitutes interaction in your project.
+
+These can also be weighted by giving a numeric
+value to the @sortKey attribute of the <relation>
+element.
+
+Of course you can also create other types of
+graphs based on dynamic data.
+
 ## Functions
 There are currently one main function:
 
