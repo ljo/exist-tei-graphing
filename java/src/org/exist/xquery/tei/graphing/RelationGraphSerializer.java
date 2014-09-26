@@ -47,6 +47,7 @@ import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
+import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.renderers.BasicVertexLabelRenderer.InsidePositioner;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
@@ -153,15 +154,15 @@ public class RelationGraphSerializer {
     }
     
     
-    public ValueSequence relationGraphReport(final String outputFormat, final int numberOfVertices) throws XPathException {
+    public ValueSequence relationGraphReport(final Properties parameters, final int numberOfVertices) throws XPathException {
         ValueSequence result = new ValueSequence();
-        if ("svg".equals(outputFormat)) {
+        if ("svg".equals(parameters.getProperty("output"))) {
             //LOG.info(relationGraph.toString());
-            result.add(toSvg((JungRelationGraph) relationGraph, numberOfVertices));
+            result.add(toSvg((JungRelationGraph) relationGraph, numberOfVertices, parameters));
         } else {
             final MemTreeBuilder builder = context.getDocumentBuilder();
             builder.startDocument();
-            if ("graphml".equals(outputFormat)) {
+            if ("graphml".equals(parameters.getProperty("output"))) {
                 toGraphML(builder);
             }
             result.add((NodeValue) builder.getDocument().getDocumentElement());
@@ -247,7 +248,7 @@ public class RelationGraphSerializer {
         }
     }
 
-    public NodeValue toSvg(JungRelationGraph jvg, final int numberOfVertices) throws XPathException {
+    public NodeValue toSvg(JungRelationGraph jvg, final int numberOfVertices, final Properties parameters) throws XPathException {
         Dimension dimension = new Dimension(960, 600);
 	if (numberOfVertices > 55) {
 	    dimension = new Dimension(1600, 1000);
@@ -266,7 +267,7 @@ public class RelationGraphSerializer {
             SVGGraphics2D svgGenerator = new SVGGraphics2D(ctx, false);
             svgGenerator.setUnsupportedAttributes(null);
             // draw the graph in the SVG generator
-            final VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge> server = createServer(jvg, dimension);
+            final VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge> server = createServer(jvg, dimension, parameters);
 	    
             //Element svg = document.getDocumentElement();
             //svgGenerator.getRoot(svg);
@@ -298,7 +299,7 @@ public class RelationGraphSerializer {
     }
     
     public VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge>
-        createServer(final JungRelationGraph jvg, final Dimension dimension) {
+        createServer(final JungRelationGraph jvg, final Dimension dimension, final Properties parameters) {
         Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout = new FRLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
         //Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout = new ISOMLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
         //Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout = new KKLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
@@ -379,6 +380,13 @@ public class RelationGraphSerializer {
             });
 
         vis.getRenderContext().setEdgeStrokeTransformer(new EdgeStrokeRenderer());
+	if ("bent".equals(parameters.getProperty("edgeshape"))) {
+	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.BentLine());
+	} else if ("line".equals(parameters.getProperty("edgeshape"))) {
+	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
+	} else {
+	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
+	}
 
         return vis;
     }
@@ -410,12 +418,15 @@ public class RelationGraphSerializer {
         private final Stroke basic = new BasicStroke(1);
         private final Stroke basic2 = new BasicStroke(2);
         private final Stroke basic3 = new BasicStroke(3);
+        private final Stroke basic4 = new BasicStroke(4);
         private final Stroke dashed = RenderContext.DASHED;
         private final Stroke dotted = RenderContext.DOTTED;
         @Override
             public Stroke transform(JungRelationGraphEdge edge) {
             if(edge.relation() instanceof WeightedRelation) {
-                if (((WeightedRelation)edge.relation()).getWeight() > 10) {
+                if (((WeightedRelation)edge.relation()).getWeight() > 20) {
+                    return basic4;
+                } else if (((WeightedRelation)edge.relation()).getWeight() > 10) {
                     return basic3;
                 } else if (((WeightedRelation)edge.relation()).getWeight() > 4) {
                     return basic2;

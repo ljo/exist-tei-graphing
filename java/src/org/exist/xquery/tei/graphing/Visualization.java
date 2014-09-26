@@ -130,6 +130,7 @@ public class Visualization extends BasicFunction {
 
         Properties parameters = new Properties();
         parameters.setProperty("output", "svg");
+        parameters.setProperty("edgeshape", "line");
 
         context.pushDocumentContext();
         ValueSequence result = new ValueSequence();
@@ -159,7 +160,7 @@ public class Visualization extends BasicFunction {
                 }
             }
             RelationGraphSerializer rgs = new RelationGraphSerializer(context, relationGraph);
-            return rgs.relationGraphReport(parameters.getProperty("output"), vertexFromSubjectId.size());
+            return rgs.relationGraphReport(parameters, vertexFromSubjectId.size());
         } finally {
             context.popDocumentContext();
         }
