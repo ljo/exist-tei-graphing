@@ -300,11 +300,24 @@ public class RelationGraphSerializer {
     
     public VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge>
         createServer(final JungRelationGraph jvg, final Dimension dimension, final Properties parameters) {
-        Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout = new FRLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
-        //Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout = new ISOMLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
-        //Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout = new KKLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
-        //Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout = new CircleLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
-
+        Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout;
+	switch (parameters.getProperty("layout").toLowerCase()) {
+	case "circlelayout":
+	    layout = new CircleLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
+	    break;
+	case "frlayout":
+	    layout = new FRLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
+	    break;
+	case "isomlayout":
+	    layout = new ISOMLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
+	    break;
+	case "kklayout":
+	    layout = new KKLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
+	    break;
+	default:
+	    layout = new FRLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
+	    break;
+	}
         layout.setSize(dimension);
         final VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge> vis =
             new VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge>(layout, dimension);
@@ -380,12 +393,17 @@ public class RelationGraphSerializer {
             });
 
         vis.getRenderContext().setEdgeStrokeTransformer(new EdgeStrokeRenderer());
-	if ("bent".equals(parameters.getProperty("edgeshape"))) {
+
+	switch (parameters.getProperty("edgeshape").toLowerCase()) {
+	case "bent":
 	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.BentLine());
-	} else if ("line".equals(parameters.getProperty("edgeshape"))) {
+	    break;
+	case "line":
 	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
-	} else {
+	    break;
+	default:
 	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
+	    break;
 	}
 
         return vis;
