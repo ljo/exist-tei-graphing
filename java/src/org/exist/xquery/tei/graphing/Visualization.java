@@ -131,6 +131,7 @@ public class Visualization extends BasicFunction {
         Properties parameters = new Properties();
         parameters.setProperty("output", "svg");
         parameters.setProperty("edgeshape", "line");
+        parameters.setProperty("layout", "frlayout");
 
         context.pushDocumentContext();
         ValueSequence result = new ValueSequence();

@@ -301,7 +301,7 @@ public class RelationGraphSerializer {
     public VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge>
         createServer(final JungRelationGraph jvg, final Dimension dimension, final Properties parameters) {
         Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout;
-	switch (parameters.getProperty("layout").toLowerCase()) {
+	switch (parameters.getProperty("layout", "frlayout").toLowerCase()) {
 	case "circlelayout":
 	    layout = new CircleLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
 	    break;
@@ -394,7 +394,7 @@ public class RelationGraphSerializer {
 
         vis.getRenderContext().setEdgeStrokeTransformer(new EdgeStrokeRenderer());
 
-	switch (parameters.getProperty("edgeshape").toLowerCase()) {
+	switch (parameters.getProperty("edgeshape", "line").toLowerCase()) {
 	case "bent":
 	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.BentLine());
 	    break;
