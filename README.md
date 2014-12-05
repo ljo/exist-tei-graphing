@@ -77,10 +77,20 @@ Parameters:
 
     $listRelations+ 	The tei:listRelation elements to create the graph from
 
-    $configuration 	The configuration, currently only output type, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt;/parameters&gt;. Values for 'output' can be 'svg' or 'graphml'.
+    $configuration 	The configuration, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt;/parameters&gt;.'.
 Returns:
     node() : The serialized relation graph.
 
+## Configuration parameters
+Configuration parameters can be given as a parameters element fragment, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt;/parameters&gt;. The current parameters are the following with the default given as first value:
+* output: values 'svg', 'graphml'.
+* edgeshape: values 'line', 'bentline' ('bent'), 'box', 'cubiccurve' ('cubic'), 'loop', 'orthogonal', 'quadcurve' ('quad'), 'simpleloop', 'wedge'.
+* layout: values 'frlayout' ('fr'), 'circlelayout' ('circle'), 'daglayout' ('dag'), 'isomlayout' ('isom'), 'kklayout' ('kk'), 'staticlayout' ('static')
+* vertexlabelposition: values 'center', 'auto', 'east', 'north', 'northeast', 'northwest', 'south', 'southeast', 'southwest', 'west'.
+* vertexlabelpositioner: values 'inside', 'outside' 
+* labeloffset: integer value.
+
+Some of the values are not immediately meaningful but tries to mirror the jung2 values and thus might be removed in case they cannot be bootstraped in this context, eg options can be dependent on other options not implemented and so on.
 
 ## Usage example
 

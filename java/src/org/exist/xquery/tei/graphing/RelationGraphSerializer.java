@@ -39,6 +39,7 @@ import java.util.SortedMap;
 import java.util.regex.*;
 
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.algorithms.layout.DAGLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
@@ -50,6 +51,7 @@ import edu.uci.ics.jung.visualization.VisualizationImageServer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.renderers.BasicVertexLabelRenderer.InsidePositioner;
+import edu.uci.ics.jung.visualization.renderers.BasicVertexLabelRenderer.OutsidePositioner;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 import edu.uci.ics.jung.visualization.renderers.VertexLabelAsShapeRenderer;
 import edu.uci.ics.jung.visualization.transform.shape.GraphicsDecorator;
@@ -156,13 +158,13 @@ public class RelationGraphSerializer {
     
     public ValueSequence relationGraphReport(final Properties parameters, final int numberOfVertices) throws XPathException {
         ValueSequence result = new ValueSequence();
-        if ("svg".equals(parameters.getProperty("output"))) {
+        if ("svg".equals(parameters.getProperty("output", "svg").toLowerCase())) {
             //LOG.info(relationGraph.toString());
             result.add(toSvg((JungRelationGraph) relationGraph, numberOfVertices, parameters));
         } else {
             final MemTreeBuilder builder = context.getDocumentBuilder();
             builder.startDocument();
-            if ("graphml".equals(parameters.getProperty("output"))) {
+            if ("graphml".equals(parameters.getProperty("output", "svg").toLowerCase())) {
                 toGraphML(builder);
             }
             result.add((NodeValue) builder.getDocument().getDocumentElement());
@@ -302,44 +304,102 @@ public class RelationGraphSerializer {
         createServer(final JungRelationGraph jvg, final Dimension dimension, final Properties parameters) {
         Layout<JungRelationGraphVertex, JungRelationGraphEdge> layout;
 	switch (parameters.getProperty("layout", "frlayout").toLowerCase()) {
-	case "circlelayout":
+	case "circle" : case "circlelayout":
 	    layout = new CircleLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
 	    break;
-	case "frlayout":
+	case "dag" : case "daglayout":
+	    layout = new DAGLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
+	    break;
+	case "fr" : case "frlayout":
 	    layout = new FRLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
 	    break;
-	case "isomlayout":
+	case "isom" : case "isomlayout":
 	    layout = new ISOMLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
 	    break;
-	case "kklayout":
+	case "kk" : case "kklayout":
 	    layout = new KKLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
+	    break;
+	case "static" : case "staticlayout":
+	    layout = new StaticLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
 	    break;
 	default:
 	    layout = new FRLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
 	    break;
 	}
-        layout.setSize(dimension);
+        layout.setSize(new Dimension(dimension.width - 80, dimension.height));
         final VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge> vis =
             new VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge>(layout, dimension);
 
-        // tooltips
+	// common
+	String labelOffset = parameters.getProperty("labeloffset", "");
+	if (!"".equals(labelOffset)) {
+	    try {
+		int offset = Integer.parseInt(labelOffset);
+		vis.getRenderContext().setLabelOffset(offset);
+	    } catch (NumberFormatException e) {
+	    }
+	}
+
+	// tooltips
         //vv.setVertexToolTipTransformer(new ToStringLabeller<JungRelationGraphVertex>());
         //vv.setEdgeToolTipTransformer(new ToStringLabeller<JungrelationGraphEdge>());
 
         // Vertices
-        //vis.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<JungRelationGraphVertex>());
+	switch (parameters.getProperty("vertexlabelpositioner", "inside").toLowerCase()) {
+	case "inside":
+	    vis.getRenderer().getVertexLabelRenderer().setPositioner(new InsidePositioner());
+	    break;
+	case "outside":
+	    vis.getRenderer().getVertexLabelRenderer().setPositioner(new OutsidePositioner());
+	    break;
+	default:
+	    vis.getRenderer().getVertexLabelRenderer().setPositioner(new InsidePositioner());
+	    break;
+	}
+
+	switch (parameters.getProperty("vertexlabelposition", "center").toLowerCase()) {
+	case "auto":
+	    vis.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.AUTO);
+	    break;
+	case "center":
+	    vis.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
+	    break;
+	case "east":
+	    vis.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.E);
+	    break;
+	case "north":
+	    vis.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.N);
+	    break;
+	case "northeast":
+	    vis.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.NE);
+	    break;
+	case "northwest":
+	    vis.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.NW);
+	    break;
+	case "south":
+	    vis.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.S);
+	    break;
+	case "southeast":
+	    vis.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.SE);
+	    break;
+	case "southwest":
+	    vis.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.SW);
+	    break;
+	case "west":
+	    vis.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.W);
+	    break;
+	default:
+	    vis.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
+	    break;
+	}
+
+	//vis.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<JungRelationGraphVertex>());
         vis.getRenderContext().setVertexLabelTransformer(new Transformer<JungRelationGraphVertex, String>() {
                 @Override
                     public String transform(JungRelationGraphVertex vertex) {
-                         return "<html><center>" + vertex.toString();
+                    return "<html><center>" + vertex.toString();
               }
         });
-	
-        vis.getRenderer().getVertexLabelRenderer().setPositioner(new InsidePositioner());
-        //vis.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.AUTO);
-
-        vis.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
-        //vis.getRenderContext().setLabelOffset(15);
 
         vis.getRenderContext().setVertexFillPaintTransformer(new Transformer<JungRelationGraphVertex, Paint>() {
                 @Override
@@ -352,7 +412,9 @@ public class RelationGraphSerializer {
         Transformer<JungRelationGraphVertex, Shape> vertexShape = new Transformer<JungRelationGraphVertex, Shape>() {
             @Override
             public Shape transform(JungRelationGraphVertex vm) {
-                int sl = vm.toString().length() * 6;
+		int sl = "center".equals(parameters.getProperty("vertexlabelposition", "center").toLowerCase()) ? vm.toString().length() * 6 : vm.toString().length();
+
+                //int sl = vm.toString().length() * 6;
                 if (vm.subject() instanceof OrgSubject) {
                     return new Rectangle(-25, -10, 50 + sl, 20);
                 } else {
@@ -395,11 +457,32 @@ public class RelationGraphSerializer {
         vis.getRenderContext().setEdgeStrokeTransformer(new EdgeStrokeRenderer());
 
 	switch (parameters.getProperty("edgeshape", "line").toLowerCase()) {
-	case "bent":
+	case "bent": case "bentline":
 	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.BentLine());
+	    break;
+	case "box":
+	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Box());
+	    break;
+	case "cubic" : case "cubiccurve":
+	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.CubicCurve());
 	    break;
 	case "line":
 	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
+	    break;
+	case "loop":
+	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Loop());
+	    break;
+	case "orthogonal":
+	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Orthogonal());
+	    break;
+	case "quad" : case "quadcurve":
+	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.QuadCurve());
+	    break;
+	case "simpleloop":
+	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.SimpleLoop());
+	    break;
+	case "wedge":
+	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Wedge(10));
 	    break;
 	default:
 	    vis.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
