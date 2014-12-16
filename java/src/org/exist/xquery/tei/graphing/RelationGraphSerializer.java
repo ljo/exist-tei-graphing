@@ -192,8 +192,19 @@ public class RelationGraphSerializer {
             builder.startElement(new QName(NODE_ELEM, GRAPHML_NS, GRAPHML_PREFIX), null);
             builder.addAttribute(new QName(ID_ATT, null, null), String.valueOf("n" + id));
             GraphMLProperty.NODE_NUMBER.write(Integer.toString(id), builder);
-            GraphMLProperty.NODE_SUBJECTS.write(vertex.toString(), builder);
-            builder.endElement();
+            GraphMLProperty.NODE_SUBJECT.write(vertex.toString(), builder);
+	    if (vertex.subject() instanceof OrgSubject) {
+		GraphMLProperty.NODE_TYPE.write("organisation", builder);
+	    } else if (vertex.subject() instanceof PersonSubject) {
+		if (((PersonSubject) vertex.subject()).getType().toString().equals("pet")) {
+		    GraphMLProperty.NODE_TYPE.write("pet", builder);
+		} else if (((PersonSubject) vertex.subject()).getType().toString().equals("noncast")) {
+		    GraphMLProperty.NODE_TYPE.write("noncast person", builder);
+		} else {
+		    GraphMLProperty.NODE_TYPE.write("cast person", builder);
+		}
+	    }
+	    builder.endElement();
         }
         
         int edgeNumber = 0;
@@ -207,8 +218,11 @@ public class RelationGraphSerializer {
             
             builder.addAttribute(new QName(TARGET_ATT, null, null), String.valueOf("n" + numericId(edge.to())));
             GraphMLProperty.EDGE_NUMBER.write(Integer.toString(edgeNumber++), builder);
-            GraphMLProperty.EDGE_TYPE.write(Relation.getType(edge), builder);
             GraphMLProperty.EDGE_RELATION.write(Relation.getVerb(edge), builder);
+	    if (edge.relation() instanceof WeightedRelation) {
+		GraphMLProperty.EDGE_WEIGHT.write(Integer.toString(((WeightedRelation)edge.relation()).getWeight()), builder);
+	    }
+            GraphMLProperty.EDGE_TYPE.write(Relation.getType(edge), builder);
             builder.endElement();
         }
         
@@ -218,11 +232,13 @@ public class RelationGraphSerializer {
 
     private enum GraphMLProperty {
         NODE_NUMBER(NODE_ELEM, "number", "int"), //
-        NODE_SUBJECTS(NODE_ELEM, "subjects", "string"), //
+        NODE_SUBJECT(NODE_ELEM, "subject", "string"), //
+        NODE_TYPE(NODE_ELEM, "type", "string"), //
         EDGE_NUMBER(EDGE_ELEM, "number", "int"), //
-        EDGE_TYPE(EDGE_ELEM, "type", "string"), //
-        EDGE_RELATION(EDGE_ELEM, "relation", "string");
-        
+        EDGE_RELATION(EDGE_ELEM, "relation", "string"), //
+        EDGE_WEIGHT(EDGE_ELEM, "weight", "int"), //
+        EDGE_TYPE(EDGE_ELEM, "type", "string");
+
         private String name;
         private String forElement;
         private String type;
