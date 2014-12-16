@@ -120,7 +120,7 @@ public class RelationGraphSerializer {
     private static final String GRAPH_ELEM = "graph";
     private static final String XMLNSXSI_ATT = "xmlns:xsi";
     private static final String XSISL_ATT = "xsi:schemaLocation";
-    private static final String GRAPHML_XMLNSXSI = "http://www.w3.org/2001/XMLSchema-instance";
+    private static final String XMLNSXSI = "http://www.w3.org/2001/XMLSchema-instance";
     private static final String GRAPHML_XSISL = "http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd";
     private static final String NODE_ELEM = "node";
     private static final String TARGET_ATT = "target";
@@ -143,6 +143,32 @@ public class RelationGraphSerializer {
     private static final String ID_ATT = "id";
     private static final String KEY_ELEM = "key";
     private static final String DATA_ELEM = "data";
+    public static final String GEXF_NS = "http://www.gexf.net/1.2draft";
+    private static final String GEXF_PREFIX = "gxf";
+    private static final String GEXF_DOC_ELEM = "gexf";
+    private static final String GEXF_XSISL = "http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd";
+    private static final String GEXF_VERSION_ATT = "version";
+    private static final String GEXF_VERSION = "1.2";
+    private static final String META_ELEM = "meta";
+    private static final String LASTMODIFIEDDATE_ATT = "lastmodifieddate";
+    private static final String CREATOR_ELEM = "creator";
+    private static final String DESC_ELEM = "description";
+    private static final String DEFAULTEDGETYPE_ATT = "defaultedgetype";
+    private static final String ATTRS_ELEM = "attributes";
+    private static final String CLASS_ATT = "class";
+    private static final String MODE_ATT = "mode";
+    private static final String ATTR_ELEM = "attribute";
+    private static final String DEFAULT_ELEM = "default";
+    private static final String TITLE_ATT = "title";
+    private static final String TYPE_ATT = "type";
+    private static final String NODES_ELEM = "nodes";
+    private static final String LABEL_ATT = "label";
+    private static final String EDGES_ELEM = "edges";
+    private static final String ATTVALUES_ELEM = "attvalues";
+    private static final String ATTVALUE_ELEM = "attvalue";
+    private static final String VALUE_ATT = "value";
+    private static final String WEIGHT_ATT = "weight";
+
     private static File dataDir = null;
 
     private XQueryContext context;
@@ -155,25 +181,30 @@ public class RelationGraphSerializer {
         this.relationGraph = relationGraph;
     }
     
-    
     public ValueSequence relationGraphReport(final Properties parameters, final int numberOfVertices) throws XPathException {
         ValueSequence result = new ValueSequence();
-        if ("svg".equals(parameters.getProperty("output", "svg").toLowerCase())) {
-            //LOG.info(relationGraph.toString());
-            result.add(toSvg((JungRelationGraph) relationGraph, numberOfVertices, parameters));
-        } else {
-            final MemTreeBuilder builder = context.getDocumentBuilder();
-            builder.startDocument();
-            if ("graphml".equals(parameters.getProperty("output", "svg").toLowerCase())) {
-                toGraphML(builder);
-            }
+	final MemTreeBuilder builder = context.getDocumentBuilder();
+	switch (parameters.getProperty("output", "svg").toLowerCase()) {
+	case "gexf":
+	    toGexf(builder);
+	    result.add((NodeValue) builder.getDocument().getDocumentElement());
+	    break;
+	case "graphml":
+	    toGraphML(builder);
             result.add((NodeValue) builder.getDocument().getDocumentElement());
-        }
+	    break;
+	case "svg":
+	    result.add(toSvg((JungRelationGraph) relationGraph, numberOfVertices, parameters));
+	    break;
+	default:
+	    result.add(toSvg((JungRelationGraph) relationGraph, numberOfVertices, parameters));
+	    break;
+	}
         return result;
     }
-    
 
     private void toGraphML(final MemTreeBuilder builder) {
+	builder.startDocument();
         builder.startElement(new QName(GRAPHML_DOC_ELEM, GRAPHML_NS, GRAPHML_PREFIX), null);
         for (GraphMLProperty p : GraphMLProperty.values()) {
             p.declare(builder);
@@ -265,6 +296,148 @@ public class RelationGraphSerializer {
             builder.endElement();
         }
     }
+
+    private void toGexf(final MemTreeBuilder builder) {
+	builder.startDocument();
+	builder.startElement(new QName(GEXF_DOC_ELEM, GEXF_NS, GEXF_PREFIX), null);
+	builder.addAttribute(new QName(XMLNSXSI_ATT, null, null), String.valueOf(XMLNSXSI));
+        builder.addAttribute(new QName(XSISL_ATT, null, null), String.valueOf(GEXF_XSISL));
+        builder.addAttribute(new QName(GEXF_VERSION_ATT, null, null), String.valueOf(GEXF_VERSION));
+	builder.startElement(new QName(META_ELEM, GEXF_NS, GEXF_PREFIX), null);
+	builder.startElement(new QName(CREATOR_ELEM, GEXF_NS, GEXF_PREFIX), null);
+	builder.endElement();
+	builder.endElement();
+        builder.startElement(new QName(GRAPH_ELEM, GEXF_NS, GEXF_PREFIX), null);
+        builder.addAttribute(new QName(DEFAULTEDGETYPE_ATT, null, null), String.valueOf(EDGEDEFAULT_DEFAULT_VALUE));
+	//builder.addAttribute(new QName(MODE_ATT, null, null), String.valueOf("static"));
+
+	builder.startElement(new QName(ATTRS_ELEM, GEXF_NS, GEXF_PREFIX), null);
+	builder.addAttribute(new QName(CLASS_ATT, null, null), String.valueOf("node"));
+        for (GexfNodeProperty p : GexfNodeProperty.values()) {
+            p.declare(builder);
+        }
+	builder.endElement();
+	
+	builder.startElement(new QName(ATTRS_ELEM, GEXF_NS, GEXF_PREFIX), null);
+	builder.addAttribute(new QName(CLASS_ATT, null, null), String.valueOf("edge"));
+	for (GexfEdgeProperty p : GexfEdgeProperty.values()) {
+            p.declare(builder);
+        }
+	builder.endElement();
+
+	builder.startElement(new QName(NODES_ELEM, GEXF_NS, GEXF_PREFIX), null);
+        for (RelationGraph.Vertex vertex : relationGraph.vertices()) {
+            final int id = numericId(vertex);
+            LOG.debug("Gexf vertex #: " + id);
+            builder.startElement(new QName(NODE_ELEM, GEXF_NS, GEXF_PREFIX), null);
+            builder.addAttribute(new QName(ID_ATT, null, null), String.valueOf("n" + id));
+	    builder.addAttribute(new QName(LABEL_ATT, null, null), vertex.toString());
+	    
+	    builder.startElement(new QName(ATTVALUES_ELEM, GEXF_NS, GEXF_PREFIX), null);
+            GexfNodeProperty.NODE_NUMBER.write(Integer.toString(id), builder);
+            GexfNodeProperty.NODE_SUBJECT.write(vertex.toString(), builder);
+	    if (vertex.subject() instanceof OrgSubject) {
+		GexfNodeProperty.NODE_TYPE.write("organisation", builder);
+	    } else if (vertex.subject() instanceof PersonSubject) {
+		if (((PersonSubject) vertex.subject()).getType().toString().equals("pet")) {
+		    GexfNodeProperty.NODE_TYPE.write("pet", builder);
+		} else if (((PersonSubject) vertex.subject()).getType().toString().equals("noncast")) {
+		    GexfNodeProperty.NODE_TYPE.write("noncast person", builder);
+		} else {
+		    GexfNodeProperty.NODE_TYPE.write("cast person", builder);
+		}
+	    }
+	    builder.endElement();
+	    builder.endElement();
+        }
+	builder.endElement();
+	
+	builder.startElement(new QName(EDGES_ELEM, GEXF_NS, GEXF_PREFIX), null);
+        int edgeNumber = 0;
+        for (RelationGraph.Edge edge : relationGraph.edges()) {
+            LOG.debug("Gexf edge #: " + edgeNumber);
+            builder.startElement(new QName(EDGE_ELEM, GEXF_NS, GEXF_PREFIX), null);
+            builder.addAttribute(new QName(ID_ATT, null, null), String.valueOf("e" + edgeNumber++));
+	    if (edge.directed()) {
+		builder.addAttribute(new QName(TYPE_ATT, null, null), "directed");
+	    }
+            builder.addAttribute(new QName(SOURCE_ATT, null, null), String.valueOf("n" + numericId(edge.from())));
+            builder.addAttribute(new QName(TARGET_ATT, null, null), String.valueOf("n" + numericId(edge.to())));
+            builder.addAttribute(new QName(LABEL_ATT, null, null), Relation.getVerb(edge));
+	    if (edge.relation() instanceof WeightedRelation) {
+		builder.addAttribute(new QName(WEIGHT_ATT, null, null), Integer.toString(((WeightedRelation)edge.relation()).getWeight()));
+	    }
+	    builder.startElement(new QName(ATTVALUES_ELEM, GEXF_NS, GEXF_PREFIX), null);
+	    GexfEdgeProperty.EDGE_TYPE.write(Relation.getType(edge), builder);
+            builder.endElement();
+	    
+	    builder.endElement();
+        }
+	builder.endElement();
+		
+        builder.endElement();
+        builder.endElement();
+    }
+
+    private enum GexfNodeProperty {
+	NODE_NUMBER("number", "integer"), //
+	NODE_SUBJECT("subject", "string"), //
+	NODE_TYPE("type", "string");
+
+        private String name;
+        private String type;
+        
+        private GexfNodeProperty(String name, String type) {
+            this.name = name;
+            this.type = type;
+        }
+        
+        public void write(final String data, MemTreeBuilder builder) {
+            builder.startElement(new QName(ATTVALUE_ELEM, GEXF_NS, GEXF_PREFIX), null);
+            builder.addAttribute(new QName(FOR_ATT, null, null), String.valueOf("dn" + ordinal()));
+            builder.addAttribute(new QName(VALUE_ATT, null, null), String.valueOf(data));
+            builder.endElement();
+        }
+        
+        public void declare(MemTreeBuilder builder) {
+	    builder.startElement(new QName(ATTR_ELEM, GEXF_NS, GEXF_PREFIX), null);
+            builder.addAttribute(new QName(ID_ATT, null, null), String.valueOf("dn" + ordinal()));
+            builder.addAttribute(new QName(TITLE_ATT, null, null), String.valueOf(name));
+            builder.addAttribute(new QName(TYPE_ATT, null, null), String.valueOf(type));
+            builder.endElement();
+        }
+    }
+
+        private enum GexfEdgeProperty {
+	EDGE_NUMBER("number", "integer"), //
+	EDGE_RELATION("relation", "string"), //
+	EDGE_WEIGHT("weight", "integer"), //
+	EDGE_TYPE("type", "string");
+
+        private String name;
+        private String type;
+        
+        private GexfEdgeProperty(String name, String type) {
+            this.name = name;
+            this.type = type;
+        }
+
+	public void write(final String data, MemTreeBuilder builder) {
+            builder.startElement(new QName(ATTVALUE_ELEM, GEXF_NS, GEXF_PREFIX), null);
+            builder.addAttribute(new QName(FOR_ATT, null, null), String.valueOf("de" + ordinal()));
+            builder.addAttribute(new QName(VALUE_ATT, null, null), String.valueOf(data));
+            builder.endElement();
+        }
+
+	public void declare(MemTreeBuilder builder) {
+	    builder.startElement(new QName(ATTR_ELEM, GEXF_NS, GEXF_PREFIX), null);
+            builder.addAttribute(new QName(ID_ATT, null, null), String.valueOf("de" + ordinal()));
+            builder.addAttribute(new QName(TITLE_ATT, null, null), String.valueOf(name));
+            builder.addAttribute(new QName(TYPE_ATT, null, null), String.valueOf(type));
+            builder.endElement();
+        }
+    }
+
 
     public NodeValue toSvg(JungRelationGraph jvg, final int numberOfVertices, final Properties parameters) throws XPathException {
         Dimension dimension = new Dimension(960, 600);
