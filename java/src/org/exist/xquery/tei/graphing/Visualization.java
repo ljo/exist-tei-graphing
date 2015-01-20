@@ -41,21 +41,11 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 
 import org.exist.Namespaces;
-import org.exist.collections.Collection;
-import org.exist.dom.BinaryDocument;
-import org.exist.dom.DocumentImpl;
+//import org.exist.dom.persistent.BinaryDocument;
+//import org.exist.dom.persistent.DocumentImpl;
 import org.exist.dom.QName;
-import org.exist.memtree.MemTreeBuilder;
-import org.exist.memtree.NodeImpl;
-import org.exist.security.PermissionDeniedException;
-import org.exist.storage.BrokerPool;
-import org.exist.storage.DBBroker;
-import org.exist.storage.lock.Lock;
-import org.exist.storage.txn.TransactionManager;
-import org.exist.storage.txn.Txn;
-import org.exist.util.MimeType;
-import org.exist.util.VirtualTempFile;
-import org.exist.xmldb.XmldbURI;
+//import org.exist.security.PermissionDeniedException;
+//import org.exist.xmldb.XmldbURI;
 import org.exist.xquery.*;
 import org.exist.xquery.modules.ModuleUtils;
 import org.exist.xquery.tei.TEIGraphingModule;
@@ -66,7 +56,6 @@ import org.exist.xquery.value.*;
 
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
