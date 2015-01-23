@@ -44,6 +44,7 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.RenderContext;
@@ -492,6 +493,9 @@ public class RelationGraphSerializer {
 	case "kk" : case "kklayout":
 	    layout = new KKLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
 	    break;
+	case "spring" : case "springlayout":
+	    layout = new SpringLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
+	    break;
 	case "static" : case "staticlayout":
 	    layout = new StaticLayout<JungRelationGraphVertex, JungRelationGraphEdge>(jvg);
 	    break;
@@ -530,8 +534,26 @@ public class RelationGraphSerializer {
 	    } catch (NumberFormatException e) {
 	    }
 	    break;
+	case "spring" : case "springlayout":
+	    try {
+		double forceMultiplier = Double.parseDouble(parameters.getProperty("forcemultiplier", "1.0 / 3.0"));
+		((SpringLayout) layout).setForceMultiplier(forceMultiplier);
+	    } catch (NumberFormatException e) {
+	    }
+	    try {
+		double repulsionRange = Integer.parseInt(parameters.getProperty("repulsionrange", "100"));
+		((SpringLayout) layout).setForceMultiplier(repulsionRange);
+	    } catch (NumberFormatException e) {
+	    }
+	    try {
+		double stretch = Double.parseDouble(parameters.getProperty("stretch", "0.7"));
+		((SpringLayout) layout).setStretch(stretch);
+	    } catch (NumberFormatException e) {
+	    }
+	    break;
 	default: break;
 	}
+
         final VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge> vis =
             new VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge>(layout, dimension);
 

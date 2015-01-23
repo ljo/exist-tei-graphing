@@ -85,14 +85,16 @@ Returns:
 Configuration parameters can be given as a parameters element fragment, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt;/parameters&gt;. The current parameters are the following with the default given as first value:
 * output: values 'svg', 'graphml', 'gexf'.
 * edgeshape: values 'line', 'bentline' ('bent'), 'box', 'cubiccurve' ('cubic'), 'loop', 'orthogonal', 'quadcurve' ('quad'), 'simpleloop', 'wedge'.
-* layout: values 'frlayout' ('fr'), 'circlelayout' ('circle'), 'daglayout' ('dag'), 'isomlayout' ('isom'), 'kklayout' ('kk'), 'staticlayout' ('static')
+* layout: values 'frlayout' ('fr'), 'circlelayout' ('circle'), 'daglayout' ('dag'), 'isomlayout' ('isom'), 'kklayout' ('kk'), 'springlayout' ('spring'), 'staticlayout' ('static')
 * maxiterations (for frlayout): 700, integer value
 * repulsionmultipier (for frlayout): 0.75, double value
 * attractionmultiplier (for frlayout): 0.75, double value
 * maxiterations (for kklayout): 2000, integer value
 * adjustforgravity (for kklayout): true, boolean value
 * exchangevertices (for kklayout): true, boolean value
-
+* forcemultiplier (for springlayout): 1/3, double value
+* repulsionrange (for springlayout): 100, integer value
+* stretch (for springlayout): 0.7, double value
 * vertexlabelposition: values 'center', 'auto', 'east', 'north', 'northeast', 'northwest', 'south', 'southeast', 'southwest', 'west'.
 * vertexlabelpositioner: values 'inside', 'outside' 
 * labeloffset: integer value.
