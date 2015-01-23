@@ -500,6 +500,38 @@ public class RelationGraphSerializer {
 	    break;
 	}
         layout.setSize(new Dimension(dimension.width - 80, dimension.height));
+
+	switch (parameters.getProperty("layout", "frlayout").toLowerCase()) {
+	case "fr" : case "frlayout" :
+	    try {
+		int maxIterations = Integer.parseInt(parameters.getProperty("maxiterations", "700"));
+		((FRLayout) layout).setMaxIterations(maxIterations);
+	    } catch (NumberFormatException e) {
+	    }
+	    try {
+		double attractionMultiplier = Double.parseDouble(parameters.getProperty("attractionmultiplier", "0.75"));
+		((FRLayout) layout).setAttractionMultiplier(attractionMultiplier);
+	    } catch (NumberFormatException e) {
+	    }
+	    try {
+		double repulsionMultiplier = Double.parseDouble(parameters.getProperty("repulsionmultiplier", "0.75"));
+		((FRLayout) layout).setRepulsionMultiplier(repulsionMultiplier);
+	    } catch (NumberFormatException e) {
+	    }
+	    break;
+	case "kk" : case "kklayout":
+	    boolean adjustForGravity = Boolean.parseBoolean(parameters.getProperty("adjustforgravity", "true"));
+	    ((KKLayout)layout).setAdjustForGravity(adjustForGravity);
+	    boolean exchangeVertices = Boolean.parseBoolean(parameters.getProperty("exchangevertices", "true"));
+	    ((KKLayout)layout).setExchangeVertices(exchangeVertices);
+	    try {
+		int maxIterations = Integer.parseInt(parameters.getProperty("maxiterations", "2000"));
+		((KKLayout) layout).setMaxIterations(maxIterations);
+	    } catch (NumberFormatException e) {
+	    }
+	    break;
+	default: break;
+	}
         final VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge> vis =
             new VisualizationImageServer<JungRelationGraphVertex, JungRelationGraphEdge>(layout, dimension);
 

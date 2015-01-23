@@ -86,6 +86,13 @@ Configuration parameters can be given as a parameters element fragment, eg &lt;p
 * output: values 'svg', 'graphml', 'gexf'.
 * edgeshape: values 'line', 'bentline' ('bent'), 'box', 'cubiccurve' ('cubic'), 'loop', 'orthogonal', 'quadcurve' ('quad'), 'simpleloop', 'wedge'.
 * layout: values 'frlayout' ('fr'), 'circlelayout' ('circle'), 'daglayout' ('dag'), 'isomlayout' ('isom'), 'kklayout' ('kk'), 'staticlayout' ('static')
+* maxiterations (for frlayout): 700, integer value
+* repulsionmultipier (for frlayout): 0.75, double value
+* attractionmultiplier (for frlayout): 0.75, double value
+* maxiterations (for kklayout): 2000, integer value
+* adjustforgravity (for kklayout): true, boolean value
+* exchangevertices (for kklayout): true, boolean value
+
 * vertexlabelposition: values 'center', 'auto', 'east', 'north', 'northeast', 'northwest', 'south', 'southeast', 'southwest', 'west'.
 * vertexlabelpositioner: values 'inside', 'outside' 
 * labeloffset: integer value.
