@@ -425,12 +425,26 @@ public class RelationGraphSerializer {
 
 
     public NodeValue toSvg(JungRelationGraph jvg, final int numberOfVertices, final Properties parameters) throws XPathException {
-        Dimension dimension = new Dimension(960, 600);
-	if (numberOfVertices > 55) {
-	    dimension = new Dimension(1600, 1000);
-	} else if (numberOfVertices > 27) {
-	    dimension = new Dimension(1200, 800);
+	int svgWidth = 960;
+	int svgHeight = 600;
+	Dimension dimension = new Dimension(svgWidth, svgHeight);
+	try {
+	    svgWidth = Integer.parseInt(parameters.getProperty("svg-width", "960"));
+	} catch (NumberFormatException e) {
 	}
+	try {
+	    svgHeight = Integer.parseInt(parameters.getProperty("svg-height", "600"));
+	} catch (NumberFormatException e) {
+	}
+	dimension = new Dimension(svgWidth, svgHeight);
+	if (svgWidth != 960 && svgHeight != 600) {
+	    if (numberOfVertices > 55) {
+		dimension = new Dimension(1600, 1000);
+	    } else if (numberOfVertices > 27) {
+		dimension = new Dimension(1200, 800);
+	    }
+	}
+
         NodeValue nv = null;
         try {
             // Get a DOMImplementation and create an XML document
