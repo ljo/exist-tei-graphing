@@ -437,8 +437,10 @@ public class RelationGraphSerializer {
 	} catch (NumberFormatException e) {
 	}
 	dimension = new Dimension(svgWidth, svgHeight);
-	if (svgWidth != 960 && svgHeight != 600) {
-	    if (numberOfVertices > 55) {
+	if (svgWidth == 960 && svgHeight == 600) {
+	    if (numberOfVertices > 82) {
+		dimension = new Dimension(2200, 1400);
+	    } else if (numberOfVertices > 55) {
 		dimension = new Dimension(1600, 1000);
 	    } else if (numberOfVertices > 27) {
 		dimension = new Dimension(1200, 800);
