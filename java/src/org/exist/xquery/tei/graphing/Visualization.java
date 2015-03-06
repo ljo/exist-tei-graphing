@@ -338,16 +338,20 @@ public class Visualization extends BasicFunction {
                         String ageAtMost;
                         String ageAtLeast;
                         if (ageAttrs.getLength() > 0) {
-                            try {
-                                ageAtMost = ageAttrs.getNamedItem("atMost").getNodeValue();
-                                value = ageAtMost;
-                            } catch (NullPointerException npe2) {
-                                try {
-                                    ageAtLeast = ageAttrs.getNamedItem("atLeast").getNodeValue();
-                                    value = ageAtLeast;
-                                } catch (NullPointerException npe3) {
-                                    LOG.error("Element 'age' is missing text node value and has neither atLeast nor atMost attribute value.");
-                                }
+			    try {
+                                value = ageAttrs.getNamedItem("value").getNodeValue();
+                            } catch (NullPointerException npev) {
+				try {
+				    ageAtMost = ageAttrs.getNamedItem("atMost").getNodeValue();
+				    value = ageAtMost;
+				} catch (NullPointerException npe2) {
+				    try {
+					ageAtLeast = ageAttrs.getNamedItem("atLeast").getNodeValue();
+					value = ageAtLeast;
+				    } catch (NullPointerException npe3) {
+                                    LOG.error("Element 'age' is missing text node value and has neither value, atLeast nor atMost attribute value.");
+				    }
+				}
                             }
                         }
                     } catch (Exception e) {
