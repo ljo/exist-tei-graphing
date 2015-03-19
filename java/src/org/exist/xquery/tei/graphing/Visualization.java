@@ -28,18 +28,6 @@ import java.util.regex.*;
 
 import org.apache.log4j.Logger;
 
-import org.apache.batik.dom.GenericDOMImplementation;
-import org.apache.batik.svggen.SVGGeneratorContext;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.batik.svggen.SVGGraphics2DIOException;
-import org.apache.commons.io.output.ByteArrayOutputStream;
-
-import edu.uci.ics.jung.visualization.VisualizationImageServer;
-import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
-import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.graph.Graph;
-
 import org.exist.Namespaces;
 //import org.exist.dom.persistent.BinaryDocument;
 //import org.exist.dom.persistent.DocumentImpl;
@@ -359,7 +347,7 @@ public class Visualization extends BasicFunction {
                     }
 
                     if (value == null) {
-                        LOG.error("Element age is missing text node value and has neither atLeast nor atMost attribute.");
+                        LOG.error("Element age is missing text node value and has neither value, atLeast nor atMost attribute.");
                     } else {
                         age = value;
                     }

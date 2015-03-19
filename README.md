@@ -84,7 +84,7 @@ Returns:
 ## Configuration parameters
 Configuration parameters can be given as a parameters element fragment, eg &lt;parameters&gt;&lt;param name='output' value='svg'/&gt;&lt;/parameters&gt;. The current parameters are the following with the default given as first value:
 * output: values 'svg', 'graphml', 'gexf'.
-* svg-width: (for svg output) 960 if less than 28 vertices, 1200 if less than 56 vertices, 1600 if less than 83 vertices and 2200 if more, integer value
+* svg-width: (for svg output) 960 if less than 28 vertices, 1200 if less than 56 vertices, 1600 if less than 83 vertices, and 2200 if more, integer value
 * svg-height: (for svg output) 600 if less than 28 vertices, 800 if less than 56 vertices, 1000 if less than 83 vertices, and 1400 if more, integer value
 * edgeshape: values 'line', 'bentline' ('bent'), 'box', 'cubiccurve' ('cubic'), 'loop', 'orthogonal', 'quadcurve' ('quad'), 'simpleloop', 'wedge'.
 * layout: values 'frlayout' ('fr'), 'circlelayout' ('circle'), 'daglayout' ('dag'), 'isomlayout' ('isom'), 'kklayout' ('kk'), 'springlayout' ('spring'), 'staticlayout' ('static')
