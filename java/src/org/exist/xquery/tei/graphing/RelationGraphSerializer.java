@@ -691,15 +691,19 @@ public class RelationGraphSerializer {
         vis.getRenderContext().setVertexStrokeTransformer(vertexStroke);
 
         // Edges
-        vis.getRenderContext().getEdgeLabelRenderer().setRotateEdgeLabels(false);
-        vis.getRenderContext().setEdgeLabelTransformer(new Transformer<JungRelationGraphEdge, String>() {
-                @Override
+	boolean showEdgeLabels = Boolean.parseBoolean(parameters.getProperty("svg-showedgelabels", "true").toLowerCase());
+	if (showEdgeLabels) {
+	    vis.getRenderContext().getEdgeLabelRenderer().setRotateEdgeLabels(false);
+	    vis.getRenderContext().setEdgeLabelTransformer(new Transformer<JungRelationGraphEdge, String>() {
+		    @Override
                     public String transform(JungRelationGraphEdge edge) {
-                    return "<html><center>" + edge.relation().getVerb();
-                }
-            });
+			return "<html><center>" + edge.relation().getVerb();
+		    }
+		});
+	}
 
-        vis.getRenderContext().setEdgeStrokeTransformer(new EdgeStrokeRenderer());
+	EdgeStrokeRenderer esr = new EdgeStrokeRenderer(Boolean.parseBoolean(parameters.getProperty("svg-useedgeweight", "true").toLowerCase()));
+	vis.getRenderContext().setEdgeStrokeTransformer(esr);
 
 	switch (parameters.getProperty("edgeshape", "line").toLowerCase()) {
 	case "bent": case "bentline":
@@ -767,20 +771,31 @@ public class RelationGraphSerializer {
         private final Stroke basic4 = new BasicStroke(4);
         private final Stroke dashed = RenderContext.DASHED;
         private final Stroke dotted = RenderContext.DOTTED;
+
+	private boolean useWeight = true;
+
+	public EdgeStrokeRenderer(boolean useWeight) {
+	    this.useWeight = useWeight;
+	}
+
         @Override
             public Stroke transform(JungRelationGraphEdge edge) {
-            if(edge.relation() instanceof WeightedRelation) {
-                if (((WeightedRelation)edge.relation()).getWeight() > 20) {
-                    return basic4;
-                } else if (((WeightedRelation)edge.relation()).getWeight() > 10) {
-                    return basic3;
-                } else if (((WeightedRelation)edge.relation()).getWeight() > 4) {
-                    return basic2;
-                } else if (((WeightedRelation)edge.relation()).getWeight() > 1) {
-                    return basic;
-                } else {
-                    return dotted;
-                }
+            if (edge.relation() instanceof WeightedRelation) {
+		if (useWeight) {
+		    if (((WeightedRelation)edge.relation()).getWeight() > 20) {
+			return basic4;
+		    } else if (((WeightedRelation)edge.relation()).getWeight() > 10) {
+			return basic3;
+		    } else if (((WeightedRelation)edge.relation()).getWeight() > 4) {
+			return basic2;
+		    } else if (((WeightedRelation)edge.relation()).getWeight() > 1) {
+			return basic;
+		    } else {
+			return dotted;
+		    }
+		} else {
+		    return basic;
+		}
             } else {
                 try {
                     LOG.debug("RelationType: " + edge.relation().getType() == null ? "failed" : edge.relation().getType());
@@ -789,7 +804,7 @@ public class RelationGraphSerializer {
                     } else if(edge.relation().getType().equals(RelationType.PERSONAL)) {
                         return dashed;
                     } else {
-                        return dotted;
+			return dotted;
                     }
                 } catch (NullPointerException e) {
                     LOG.error("RelationType: " + edge.toString());

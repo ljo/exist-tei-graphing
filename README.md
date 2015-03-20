@@ -86,6 +86,8 @@ Configuration parameters can be given as a parameters element fragment, eg &lt;p
 * output: values 'svg', 'graphml', 'gexf'.
 * svg-width: (for svg output) 960 if less than 28 vertices, 1200 if less than 56 vertices, 1600 if less than 83 vertices, and 2200 if more, integer value
 * svg-height: (for svg output) 600 if less than 28 vertices, 800 if less than 56 vertices, 1000 if less than 83 vertices, and 1400 if more, integer value
+* svg-useedgeweight: true, boolean value, use weight on edges to make them thicker if true
+* svg-showedgelabels: true, boolean value, show edge labels if true
 * dashedstrokeorgs: false, boolean value, use dashed stroke for organisations if true
 * edgeshape: values 'line', 'bentline' ('bent'), 'box', 'cubiccurve' ('cubic'), 'loop', 'orthogonal', 'quadcurve' ('quad'), 'simpleloop', 'wedge'.
 * layout: values 'frlayout' ('fr'), 'circlelayout' ('circle'), 'daglayout' ('dag'), 'isomlayout' ('isom'), 'kklayout' ('kk'), 'springlayout' ('spring'), 'staticlayout' ('static')
