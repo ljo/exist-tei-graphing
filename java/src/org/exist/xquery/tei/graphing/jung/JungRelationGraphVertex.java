@@ -5,7 +5,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.exist.xquery.tei.graphing.RelationGraph;
 import org.exist.xquery.tei.graphing.Relation;
@@ -15,7 +16,7 @@ import org.exist.xquery.tei.graphing.Subject;
  * @author ljo
  */
 public class JungRelationGraphVertex implements RelationGraph.Vertex {
-    private final static Logger LOG = Logger.getLogger(JungRelationGraphVertex.class);
+    private final static Logger LOG = LogManager.getLogger(JungRelationGraphVertex.class);
     private final JungRelationGraph graph;
     private final Subject subject;
 

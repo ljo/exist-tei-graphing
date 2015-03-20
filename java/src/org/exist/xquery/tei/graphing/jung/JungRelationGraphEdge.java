@@ -5,7 +5,8 @@ import java.util.Set;
 
 import edu.uci.ics.jung.graph.util.EdgeType;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.exist.xquery.tei.graphing.RelationGraph;
 import org.exist.xquery.tei.graphing.Relation;
@@ -14,7 +15,7 @@ import org.exist.xquery.tei.graphing.Relation;
  * @author ljo
  */
 public class JungRelationGraphEdge implements RelationGraph.Edge {
-    private final static Logger LOG = Logger.getLogger(JungRelationGraphEdge.class);
+    private final static Logger LOG = LogManager.getLogger(JungRelationGraphEdge.class);
     final JungRelationGraph graph;
     final Relation relation;
 

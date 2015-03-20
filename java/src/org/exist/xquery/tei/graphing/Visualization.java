@@ -26,7 +26,8 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.regex.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.exist.Namespaces;
 //import org.exist.dom.persistent.BinaryDocument;
@@ -53,7 +54,7 @@ import org.w3c.dom.Node;
  * @author ljo
  */
 public class Visualization extends BasicFunction {
-    private final static Logger LOG = Logger.getLogger(Visualization.class);
+    private final static Logger LOG = LogManager.getLogger(Visualization.class);
     
     public final static FunctionSignature signatures[] = {
         new FunctionSignature(

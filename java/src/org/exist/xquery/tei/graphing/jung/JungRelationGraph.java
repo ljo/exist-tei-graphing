@@ -12,7 +12,8 @@ import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.exist.xquery.tei.graphing.Relation;
 import org.exist.xquery.tei.graphing.RelationGraph;
@@ -22,7 +23,7 @@ import org.exist.xquery.tei.graphing.Subject;
  * @author ljo
  */
 public class JungRelationGraph extends SparseMultigraph<JungRelationGraphVertex, JungRelationGraphEdge> implements RelationGraph {
-    private final static Logger LOG = Logger.getLogger(JungRelationGraph.class);
+    private final static Logger LOG = LogManager.getLogger(JungRelationGraph.class);
     JungRelationGraphVertex start;
     JungRelationGraphVertex end;
 

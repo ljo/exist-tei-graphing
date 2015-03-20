@@ -63,7 +63,8 @@ import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.exist.dom.QName;
 import org.exist.dom.memtree.MemTreeBuilder;
@@ -87,7 +88,7 @@ import org.xml.sax.SAXException;
  * @author ljo
  */
 public class RelationGraphSerializer {
-    private final static Logger LOG = Logger.getLogger(RelationGraphSerializer.class);
+    private final static Logger LOG = LogManager.getLogger(RelationGraphSerializer.class);
     
     public static final String TEI_NS = "http://www.tei-c.org/ns/1.0";
     public static final String TEI_PREFIX = "tei";
@@ -667,11 +668,13 @@ public class RelationGraphSerializer {
         };
         vis.getRenderContext().setVertexShapeTransformer(vertexShape);
         //vis.getRenderContext().setVertexShapeTransformer(new VertexLabelAsShapeRenderer<JungRelationGraphVertex, JungRelationGraphEdge>(vis.getRenderContext()));
+	final boolean dashedStrokeOrgs = Boolean.parseBoolean(parameters.getProperty("dashedstrokeorgs", "false"));
         Transformer<JungRelationGraphVertex, Stroke> vertexStroke = new Transformer<JungRelationGraphVertex, Stroke>() {
             float dash[] = { 10.0f };
             public Stroke transform(JungRelationGraphVertex v) {
                 try {
-                    if (v.subject() instanceof PersonSubject && ((PersonSubject) v.subject()).getType().toString().equals("noncast")) {
+                    if ((v.subject() instanceof PersonSubject && ((PersonSubject) v.subject()).getType().toString().equals("noncast")) ||
+			(v.subject() instanceof OrgSubject && dashedStrokeOrgs)) {
                         return new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
                                                BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
                     } else {

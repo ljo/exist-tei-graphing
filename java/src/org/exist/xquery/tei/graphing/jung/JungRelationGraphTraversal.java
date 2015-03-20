@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import org.exist.xquery.tei.graphing.Relation;
 import org.exist.xquery.tei.graphing.RelationGraph;
@@ -17,7 +18,7 @@ import org.exist.xquery.tei.graphing.RelationGraph;
  * @author ljo
  */
 public class JungRelationGraphTraversal implements Iterable<RelationGraph.Vertex> {
-    private final static Logger LOG = Logger.getLogger(JungRelationGraphTraversal.class);
+    private final static Logger LOG = LogManager.getLogger(JungRelationGraphTraversal.class);
     private final RelationGraph relationGraph;
     private final Set<Relation> relations;
 
