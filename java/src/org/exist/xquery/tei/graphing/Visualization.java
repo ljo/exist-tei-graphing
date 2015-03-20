@@ -135,6 +135,13 @@ public class Visualization extends BasicFunction {
                     parameters = ModuleUtils.parseParameters(((NodeValue)args[2].itemAt(0)).getNode());
                 }
             }
+
+	    boolean removeUnconnected = Boolean.parseBoolean(parameters.getProperty("removeunconnected", "false").toLowerCase());
+	    if (removeUnconnected) {
+		removeUnconnectedGroupVertices();
+	    }
+		    
+	    
             RelationGraphSerializer rgs = new RelationGraphSerializer(context, relationGraph);
             return rgs.relationGraphReport(parameters, vertexFromSubjectId.size());
         } finally {
@@ -738,5 +745,21 @@ public class Visualization extends BasicFunction {
                 }
             }
         }
+    }
+    /**
+     * Remove unconnected group vertices from the graph.
+     *
+     */
+    private void removeUnconnectedGroupVertices() {
+	//for (String sid : vertexFromSubjectId)
+	//relationGraph.subjects();
+	for (RelationGraph.Vertex vertex : relationGraph.vertices()) {
+	    if (vertex.relations().size() == 0) {
+		if ((vertex.subject() instanceof PersonSubject && ((PersonSubject) vertex.subject()).isGroup()) || vertex.subject() instanceof OrgSubject) {
+		    LOG.info("No relations for vertex: " + vertex);
+		    vertex.delete();
+		}
+	    }
+	}
     }
 }

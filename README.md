@@ -101,7 +101,8 @@ Configuration parameters can be given as a parameters element fragment, eg &lt;p
 * repulsionrange (for springlayout): 100, integer value
 * stretch (for springlayout): 0.7, double value
 * vertexlabelposition: values 'center', 'auto', 'east', 'north', 'northeast', 'northwest', 'south', 'southeast', 'southwest', 'west'.
-* vertexlabelpositioner: values 'inside', 'outside' 
+* vertexlabelpositioner: values 'inside', 'outside'
+* removeunconnected: false, boolean value, remove unconnected group vertices from the graph if true
 * labeloffset: integer value.
 
 Some of the values are not immediately meaningful but tries to mirror the jung2 values and thus might be removed in case they cannot be bootstraped in this context, eg options can be dependent on other options not implemented and so on.

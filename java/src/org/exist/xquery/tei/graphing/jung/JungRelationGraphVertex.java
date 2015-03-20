@@ -51,6 +51,9 @@ public class JungRelationGraphVertex implements RelationGraph.Vertex {
         for (RelationGraph.Edge edge : incoming()) {
             relations.add(edge.relation());
         }
+	for (RelationGraph.Edge edge : outgoing()) {
+            relations.add(edge.relation());
+        }
         return relations;
     }
 
