@@ -36,6 +36,7 @@ import java.util.Properties;
 import java.util.TreeSet;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.StringTokenizer;
 import java.util.regex.*;
 
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
@@ -644,12 +645,9 @@ public class RelationGraphSerializer {
               }
         });
 
-        vis.getRenderContext().setVertexFillPaintTransformer(new Transformer<JungRelationGraphVertex, Paint>() {
-                @Override
-                    public Paint transform(JungRelationGraphVertex vertex) {
-                    return Color.WHITE;
-                }
-            });
+	String vertexFillPaint = parameters.getProperty("vertexfillpaint", "white").toLowerCase();
+
+	vis.getRenderContext().setVertexFillPaintTransformer(new VertexFillPainter(vertexFillPaint));
 
         //vis.getRenderer().setVertexRenderer(new ShapeRenderer());
         Transformer<JungRelationGraphVertex, Shape> vertexShape = new Transformer<JungRelationGraphVertex, Shape>() {
@@ -748,20 +746,111 @@ public class RelationGraphSerializer {
             GraphicsDecorator graphicsContext = rc.getGraphicsContext();
             Point2D center = layout.transform(vertex);
             Shape shape = null;
-            Color color = null;
-            if(vertex.subject() instanceof PersonSubject && ((PersonSubject)vertex.subject()).getType().equals("cast")) {
-                shape = new Rectangle((int)center.getX()-10, (int)center.getY()-10, 20, 20);
-                color = new Color(127, 127, 0);
-            } else if(vertex.subject() instanceof PersonSubject && ((PersonSubject)vertex.subject()).getType().equals("noncast")) {
-                shape = new Rectangle((int)center.getX()-10, (int)center.getY()-20, 20, 40);
-                color = new Color(127, 0, 127);
+            Color colour = null;
+            if(vertex.subject() instanceof PersonSubject && ((PersonSubject) vertex.subject()).getType().equals("cast")) {
+                shape = new Rectangle((int) center.getX() - 10, (int) center.getY() - 10, 20, 20);
+                colour = new Color(127, 127, 0);
+            } else if(vertex.subject() instanceof PersonSubject && ((PersonSubject) vertex.subject()).getType().equals("noncast")) {
+                shape = new Rectangle((int) center.getX() - 10, (int) center.getY() - 20, 20, 40);
+                colour = new Color(127, 0, 127);
             } else {
-                shape = new Ellipse2D.Double(center.getX()-10, center.getY()-10, 20, 20);
-                color = new Color(0, 127, 127);
+                shape = new Ellipse2D.Double(center.getX() - 10, center.getY() - 10, 20, 20);
+                colour = new Color(0, 127, 127);
             }
-            graphicsContext.setPaint(color);
+            graphicsContext.setPaint(colour);
             graphicsContext.fill(shape);
         }
+    }
+
+    static class VertexFillPainter implements Transformer<JungRelationGraphVertex, Paint> {
+	private String vertexFillPaint = "white";
+	private String colourType = "white";
+	private Color colour = Color.WHITE;
+	private Color femaleColour = new Color(Integer.parseInt("ff7f97", 16));
+	private Color maleColour = new Color(Integer.parseInt("6c9cd1", 16));
+	private Color otherColour = colour;
+	private Color childColour = new Color(Integer.parseInt("f9c05d", 16));
+	private Color uniColour = Color.WHITE;
+	private Map<String,String> kv;
+
+	public VertexFillPainter(String vertexFillPaint) {
+	    this.vertexFillPaint = vertexFillPaint;
+	    StringTokenizer st = new StringTokenizer(vertexFillPaint, ",");
+	    colourType = st.nextToken().trim();
+
+	    if ("gender".equals(colourType)) {
+		kv = getKeyValuePairs(st);
+		try {
+		    femaleColour = new Color(Integer.parseInt(kv.get("female"), 16));
+		    maleColour = new Color(Integer.parseInt(kv.get("male"), 16));
+		    otherColour = new Color(Integer.parseInt(kv.get("other"), 16));
+		} catch (NumberFormatException e) {
+		    LOG.error("Cannot create gender colour, key-value-pairs are not valid colour names or hex values: " + kv);
+		}
+	    }
+	    if ("age".equals(colourType)) {
+		kv = getKeyValuePairs(st);
+		try {
+		    childColour = new Color(Integer.parseInt(kv.get("children"), 16));
+		    otherColour = new Color(Integer.parseInt(kv.get("other"), 16));
+		} catch (NumberFormatException e) {
+		    LOG.error("Cannot create age color, key-value-pair is not a valid color name or hex value: " + kv);
+		}
+	    }
+	    try {
+		uniColour = new Color(Integer.parseInt(colourType, 16));
+	    } catch (NumberFormatException e) {
+		LOG.error("Cannot create color, value is not a valid color name or hex value: " + colourType);
+	    }
+	}
+
+        @Override
+	public Paint transform(JungRelationGraphVertex vertex) {
+	    switch (colourType) {
+	    case  "white" :
+		colour = Color.WHITE;
+		break;
+	    case "gender" :
+		if (vertex.subject() instanceof PersonSubject  && ((PersonSubject) vertex.subject()).getSex().toString().equals("female")) {
+		    colour = femaleColour;
+		} else if (vertex.subject() instanceof PersonSubject  && ((PersonSubject) vertex.subject()).getSex().toString().equals("male")) {
+		    colour = maleColour;
+		} else if (vertex.subject() instanceof PersonSubject) {
+		    colour = otherColour;
+		}
+		break;
+	    case "age" :
+		if (vertex.subject() instanceof PersonSubject  && (((PersonSubject) vertex.subject()).getAge().toString().equals("child") || ((PersonSubject) vertex.subject()).getAge().toString().equals("infant"))) {
+		    colour = childColour;
+		} else if (vertex.subject() instanceof PersonSubject) {
+		    colour = otherColour;
+		}
+		break;
+	    default :
+		colour = uniColour;
+		break;
+	    }
+	    return colour;
+	}
+    }
+
+    private static Map<String,String> getKeyValuePairs(StringTokenizer st) {
+	final Map<String,String> kvMap = new HashMap<String,String>();
+	while (st.hasMoreTokens()) {
+	    String colourType = st.nextToken().trim();
+	    StringTokenizer stEq = new StringTokenizer(colourType, "=");
+	    if (stEq.hasMoreTokens()) {
+		 String key = stEq.nextToken().trim();
+		 String value = "";
+		 if (stEq.hasMoreTokens()) {
+		     value = stEq.nextToken().trim();
+		 }
+		 if (!"".equals(key) && !"".equals(value)) {
+		     kvMap.put(key, value);
+		 }
+	    }
+	}
+	return kvMap;
     }
 
     static class EdgeStrokeRenderer implements Transformer<JungRelationGraphEdge, Stroke> {

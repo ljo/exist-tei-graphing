@@ -102,6 +102,7 @@ Configuration parameters can be given as a parameters element fragment, eg &lt;p
 * stretch (for springlayout): 0.7, double value
 * vertexlabelposition: values 'center', 'auto', 'east', 'north', 'northeast', 'northwest', 'south', 'southeast', 'southwest', 'west'.
 * vertexlabelpositioner: values 'inside', 'outside'
+* vertexfillpaint: values 'white', 'gender' (female=ff7f97, male=6c9cd1, other=ffffff genders white), 'age' (children=f9c05d, other=ffffff ages white), or any hexadecimal RGB colour value for all vertices.
 * removeunconnected: false, boolean value, remove unconnected group vertices from the graph if true
 * labeloffset: integer value.
 
