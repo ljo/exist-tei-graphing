@@ -79,11 +79,13 @@ public class JungRelationGraphVertex implements RelationGraph.Vertex {
 
     protected static Set<? extends RelationGraph.Edge> paths(final Iterable<JungRelationGraphEdge> edges, final Set<Relation> relations) {
         Set<RelationGraph.Edge> hs = new HashSet();
-        //for (RelationGraph.Edge edge : edges) {
-        //   if (relations.contains(edge.relation())) {
-        //         hs.add(edge);
-        //    }
-        //}
+        for (RelationGraph.Edge edge : edges) {
+	    if (relations == null) {
+                 hs.add(edge);
+	    } else if (relations.contains(edge.relation())) {
+                 hs.add(edge);
+            }
+        }
         return hs;
     }
 }

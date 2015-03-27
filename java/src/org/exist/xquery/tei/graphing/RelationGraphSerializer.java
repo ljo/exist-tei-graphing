@@ -787,8 +787,7 @@ public class RelationGraphSerializer {
 		} catch (NumberFormatException e) {
 		    LOG.error("Cannot create gender colour, key-value-pairs are not valid colour names or hex values: " + kv);
 		}
-	    }
-	    if ("age".equals(colourType)) {
+	    } else if ("age".equals(colourType)) {
 		kv = getKeyValuePairs(st);
 		try {
 		    childColour = new Color(Integer.parseInt(kv.get("children"), 16));
@@ -796,11 +795,12 @@ public class RelationGraphSerializer {
 		} catch (NumberFormatException e) {
 		    LOG.error("Cannot create age color, key-value-pair is not a valid color name or hex value: " + kv);
 		}
-	    }
-	    try {
-		uniColour = new Color(Integer.parseInt(colourType, 16));
-	    } catch (NumberFormatException e) {
-		LOG.error("Cannot create color, value is not a valid color name or hex value: " + colourType);
+	    } else {
+		try {
+		    uniColour = new Color(Integer.parseInt(colourType, 16));
+		} catch (NumberFormatException e) {
+		    LOG.error("Cannot create color, value is not a valid color name or hex value: " + colourType);
+		}
 	    }
 	}
 
@@ -817,6 +817,8 @@ public class RelationGraphSerializer {
 		    colour = maleColour;
 		} else if (vertex.subject() instanceof PersonSubject) {
 		    colour = otherColour;
+		} else if (vertex.subject() instanceof OrgSubject) {
+		    colour = uniColour;
 		}
 		break;
 	    case "age" :
@@ -824,6 +826,8 @@ public class RelationGraphSerializer {
 		    colour = childColour;
 		} else if (vertex.subject() instanceof PersonSubject) {
 		    colour = otherColour;
+		} else if (vertex.subject() instanceof OrgSubject) {
+		    colour = uniColour;
 		}
 		break;
 	    default :
@@ -837,8 +841,8 @@ public class RelationGraphSerializer {
     private static Map<String,String> getKeyValuePairs(StringTokenizer st) {
 	final Map<String,String> kvMap = new HashMap<String,String>();
 	while (st.hasMoreTokens()) {
-	    String colourType = st.nextToken().trim();
-	    StringTokenizer stEq = new StringTokenizer(colourType, "=");
+	    String pair = st.nextToken().trim();
+	    StringTokenizer stEq = new StringTokenizer(pair, "=");
 	    if (stEq.hasMoreTokens()) {
 		 String key = stEq.nextToken().trim();
 		 String value = "";
