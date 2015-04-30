@@ -872,7 +872,7 @@ public class RelationGraphSerializer {
 	}
 
         @Override
-            public Stroke transform(JungRelationGraphEdge edge) {
+	public Stroke transform(JungRelationGraphEdge edge) {
             if (edge.relation() instanceof WeightedRelation) {
 		if (useWeight) {
 		    if (((WeightedRelation)edge.relation()).getWeight() > 20) {

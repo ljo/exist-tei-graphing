@@ -205,7 +205,9 @@ public class Visualization extends BasicFunction {
         if (listPerson.getNodeType() == Node.ELEMENT_NODE && listPerson.getLocalName().equals("listPerson") && listPerson.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
             NamedNodeMap attrs = listPerson.getAttributes();
             if (attrs.getLength() > 0) {
-                type = attrs.getNamedItem("type").getNodeValue();
+		if (attrs.getNamedItem("type") != null) {
+		    type = attrs.getNamedItem("type").getNodeValue();
+		}
             }
             //Get the listPerson children
             Node child = listPerson.getFirstChild();
@@ -670,7 +672,17 @@ public class Visualization extends BasicFunction {
                                 if (relAttrs.getNamedItem("passive") != null && !"".equals(relAttrs.getNamedItem("passive").getNodeValue())) { 
                                 passive = getIds(relAttrs.getNamedItem("passive").getNodeValue());
                                 LOG.info("parseListRelations::activePassive: " + relType +":"+ name);
-                                connectActivePassive(relType, name, active, passive);
+				if (relSortKey != null) {
+                                    try {
+                                        int weight = Integer.parseInt(relSortKey);
+					connectActivePassive(relType, name, weight, active, passive);
+                                    } catch (NumberFormatException e) {
+					connectActivePassive(relType, name, active, passive);
+                                    }
+                                } else {
+				    connectActivePassive(relType, name, active, passive);
+                                }
+
 				} else {
 				LOG.error("parseListRelations::activePassive - @active without @passive: " + relType + ":" + name);
 				}
@@ -730,8 +742,17 @@ public class Visualization extends BasicFunction {
         }
     }
 
+    private void connectActivePassive(String type, String name, int weight, String[] activeSubjectIds, String[] passiveSubjectIds) {
+        Relation r1 = new WeightedRelation(name, type, weight);
+        connectActivePassive(r1, activeSubjectIds, passiveSubjectIds);
+    }
+
     private void connectActivePassive(String type, String name, String[] activeSubjectIds, String[] passiveSubjectIds) {
         Relation r1 = new Relation(name, type);
+	connectActivePassive(r1, activeSubjectIds, passiveSubjectIds);
+    }
+
+    private void connectActivePassive(Relation relation, String[] activeSubjectIds, String[] passiveSubjectIds) {
         for (String activeId : activeSubjectIds) {
             for (String passiveId : passiveSubjectIds) {
                 if (!activeId.equals(passiveId)) {
@@ -740,7 +761,7 @@ public class Visualization extends BasicFunction {
                     } else if (vertexFromSubjectId.get(passiveId) == null) {
                         LOG.error("Vertex is missing for passiveId: " + passiveId);
                     } else {
-                        relationGraph.connectDirected(vertexFromSubjectId.get(activeId), vertexFromSubjectId.get(passiveId), r1);
+                        relationGraph.connectDirected(vertexFromSubjectId.get(activeId), vertexFromSubjectId.get(passiveId), relation);
                     }
                 }
             }
