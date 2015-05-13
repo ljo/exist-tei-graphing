@@ -138,7 +138,7 @@ public class Visualization extends BasicFunction {
 
 	    boolean removeUnconnected = Boolean.parseBoolean(parameters.getProperty("removeunconnected", "false").toLowerCase());
 	    if (removeUnconnected) {
-		removeUnconnectedGroupVertices();
+		removeUnconnectedGroupOrNonPersonVertices();
 	    }
 		    
 	    
@@ -201,6 +201,7 @@ public class Visualization extends BasicFunction {
         String sex = "unknown";
         String age = "unknown";
         String occupation = "unknown";
+        String role = "person";
         
         if (listPerson.getNodeType() == Node.ELEMENT_NODE && listPerson.getLocalName().equals("listPerson") && listPerson.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
             NamedNodeMap attrs = listPerson.getAttributes();
@@ -265,6 +266,7 @@ public class Visualization extends BasicFunction {
         String sex = "unknown";
         String age = "unknown";
         String occupation = "unknown";
+        String role = "person";
         String sortKey = "";
         int weight = 1;
         NamedNodeMap persAttrs = child.getAttributes();
@@ -280,6 +282,10 @@ public class Visualization extends BasicFunction {
             }
             if (persAttrs.getNamedItem("sex") != null && !"".equals(persAttrs.getNamedItem("sex").getNodeValue())) {
                 sex = persAttrs.getNamedItem("sex").getNodeValue();
+            }
+
+	    if (persAttrs.getNamedItem("role") != null && !"".equals(persAttrs.getNamedItem("role").getNodeValue())) {
+                role = persAttrs.getNamedItem("role").getNodeValue();
             }
 
             if (persAttrs.getNamedItem("sortKey") != null && !"".equals(persAttrs.getNamedItem("sortKey").getNodeValue())) {
@@ -370,28 +376,28 @@ public class Visualization extends BasicFunction {
             persName = persId;
         }
 
-        LOG.info("parsePersons::" + persId +":"+ persName +":"+ type +":"+ sex +":"+ age +":"+ occupation);
+        LOG.info("parsePersons::" + persId +":"+ persName +":"+ type +":"+ sex +":"+ age +":"+ occupation +":"+ role);
         
         if (sortKey != null) {
             try {
                 weight = Integer.parseInt(sortKey);
                 if (child.getLocalName().equals("personGrp")) {
-                    vertexFromSubjectId.put(persId, relationGraph.add(new WeightedPersonSubject(persId, persName, type, sex, age, occupation, true, weight)));
+                    vertexFromSubjectId.put(persId, relationGraph.add(new WeightedPersonSubject(persId, persName, type, sex, age, occupation, role, true, weight)));
                 } else {
-                    vertexFromSubjectId.put(persId, relationGraph.add(new WeightedPersonSubject(persId, persName, type, sex, age, occupation, weight)));
+                    vertexFromSubjectId.put(persId, relationGraph.add(new WeightedPersonSubject(persId, persName, type, sex, age, occupation, role, weight)));
                 }
             } catch (NumberFormatException e) {
                 if (child.getLocalName().equals("personGrp")) {
-                    vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation, true)));
+                    vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation, role, true)));
                 } else {
-                    vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation)));
+                    vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation, role)));
                 }
             }
         } else {
             if (child.getLocalName().equals("personGrp")) {
-                vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation, true)));
+                vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation, role, true)));
             } else {
-                vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation)));
+                vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, persName, type, sex, age, occupation, role)));
             }
         }
     }
@@ -514,7 +520,8 @@ public class Visualization extends BasicFunction {
             String persName = "unknown";
             String sex = "unknown";
             String age = "unknown";
-            String occupation = "unknown";
+	    String occupation = "unknown";
+            String role = "person";
 
             //Parse each of the listPersonChild nodes
 	    if (listPersonChild.getLocalName().equals("listPerson") &&
@@ -539,6 +546,10 @@ public class Visualization extends BasicFunction {
 
                         if (persGrpAttrs.getNamedItem("sex") != null && !"".equals(persGrpAttrs.getNamedItem("sex").getNodeValue())) {
                             sex = persGrpAttrs.getNamedItem("sex").getNodeValue();
+                        }
+
+			if (persGrpAttrs.getNamedItem("role") != null && !"".equals(persGrpAttrs.getNamedItem("role").getNodeValue())) {
+                            role = persGrpAttrs.getNamedItem("role").getNodeValue();
                         }
                     }
 
@@ -583,8 +594,8 @@ public class Visualization extends BasicFunction {
                         grpChild = grpChild.getNextSibling();
                     }
 		    final String nameOrId = "unknown".equals(persName) ? persId : persName;
-                    LOG.info("parseListPersons::personGrp: " + persId + ":" + nameOrId +":"+ type +":"+ sex +":"+ age +":"+ occupation);
-                    vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, nameOrId, type, sex, age, occupation, true)));
+                    LOG.info("parseListPersons::personGrp: " + persId + ":" + nameOrId +":"+ type +":"+ sex +":"+ age +":"+ occupation +":"+ role);
+                    vertexFromSubjectId.put(persId, relationGraph.add(new PersonSubject(persId, nameOrId, type, sex, age, occupation, role, true)));
                 } else if (listPersonChild.getLocalName().equals("person") &&
                            listPersonChild.getNamespaceURI().equals(RelationGraphSerializer.TEI_NS)) {
                     LOG.info("listPerson/listPerson/person");
@@ -771,12 +782,14 @@ public class Visualization extends BasicFunction {
      * Remove unconnected group vertices from the graph.
      *
      */
-    private void removeUnconnectedGroupVertices() {
+    private void removeUnconnectedGroupOrNonPersonVertices() {
 	//for (String sid : vertexFromSubjectId)
 	//relationGraph.subjects();
 	for (RelationGraph.Vertex vertex : relationGraph.vertices()) {
 	    if (vertex.relations().size() == 0) {
-		if ((vertex.subject() instanceof PersonSubject && ((PersonSubject) vertex.subject()).isGroup()) || vertex.subject() instanceof OrgSubject) {
+		if ((vertex.subject() instanceof PersonSubject && ((PersonSubject) vertex.subject()).isGroup()) ||
+		    (vertex.subject() instanceof PersonSubject && !((PersonSubject) vertex.subject()).getRoleType().toString().equals("person")) ||
+		    vertex.subject() instanceof OrgSubject) {
 		    LOG.info("No relations for vertex: " + vertex);
 		    vertex.delete();
 		}

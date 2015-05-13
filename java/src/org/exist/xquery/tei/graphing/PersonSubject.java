@@ -17,43 +17,50 @@ public class PersonSubject implements Subject, Comparator<PersonSubject> {
     private Age age;
     private String ageString;
     private String occupation;
+    private RoleType role;
     private boolean isGroup = false;
 
     public PersonSubject(String id) {
-	this(id, "", SubjectType.UNKNOWN, Sex.UNKNOWN, Age.UNKNOWN, "", false);
+	this(id, "", SubjectType.UNKNOWN, Sex.UNKNOWN, Age.UNKNOWN, "", RoleType.PERSON, false);
     }
 
     public PersonSubject(String id, String name) {
-	this(id, name, SubjectType.UNKNOWN, Sex.UNKNOWN, Age.UNKNOWN, "", false);
+	this(id, name, SubjectType.UNKNOWN, Sex.UNKNOWN, Age.UNKNOWN, "", RoleType.PERSON, false);
     }
 
 
     public PersonSubject(String id, String name, String type) {
-        this(id, name, SubjectType.fromString(type), Sex.UNKNOWN, Age.UNKNOWN, "", false);
+        this(id, name, SubjectType.fromString(type), Sex.UNKNOWN, Age.UNKNOWN, "", RoleType.PERSON, false);
     }
+
     public PersonSubject(String id, String name, String type, String sex) {
-        this(id, name, SubjectType.fromString(type), Sex.fromString(sex), Age.UNKNOWN, "", false);
+        this(id, name, SubjectType.fromString(type), Sex.fromString(sex), Age.UNKNOWN, "", RoleType.PERSON, false);
     }
 
     public PersonSubject(String id, String name, String type, String sex, String age) {
-        this(id, name, SubjectType.fromString(type), Sex.fromString(sex), Age.fromString(age), "", false);
+        this(id, name, SubjectType.fromString(type), Sex.fromString(sex), Age.fromString(age), "", RoleType.PERSON, false);
     }
 
     public PersonSubject(String id, String name, String type, String sex, String age, String occupation) {
-        this(id, name, SubjectType.fromString(type), Sex.fromString(sex), Age.fromString(age), occupation, false);
+        this(id, name, SubjectType.fromString(type), Sex.fromString(sex), Age.fromString(age), occupation, RoleType.PERSON, false);
     }
 
-    public PersonSubject(String id, String name, String type, String sex, String age, String occupation, boolean isGroup) {
-        this(id, name, SubjectType.fromString(type), Sex.fromString(sex), Age.fromString(age), occupation, isGroup);
+    public PersonSubject(String id, String name, String type, String sex, String age, String occupation, String role) {
+        this(id, name, SubjectType.fromString(type), Sex.fromString(sex), Age.fromString(age), occupation, RoleType.fromString(role), false);
     }
 
-    public PersonSubject(String id, String name, SubjectType type, Sex sex, Age age, String occupation, boolean isGroup) {
+    public PersonSubject(String id, String name, String type, String sex, String age, String occupation, String role, boolean isGroup) {
+        this(id, name, SubjectType.fromString(type), Sex.fromString(sex), Age.fromString(age), occupation, RoleType.fromString(role), isGroup);
+    }
+
+    public PersonSubject(String id, String name, SubjectType type, Sex sex, Age age, String occupation, RoleType role, boolean isGroup) {
 	this.id = id;
 	this.name = name;
 	this.type = type;
 	this.sex = sex;
 	this.age = age;
 	this.occupation = occupation;
+	this.role = role;
 	this.isGroup = isGroup;
     }
 
@@ -137,6 +144,31 @@ public class PersonSubject implements Subject, Comparator<PersonSubject> {
             return null;            
         }
     }
+
+    public enum RoleType {
+        UNKNOWN("unknown"),
+        PERSON("person"),
+        ANIMAL("animal");
+
+        private String name;
+
+        private RoleType(String name) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return name;
+        }
+
+        public static RoleType fromString(final String string) {
+            for (RoleType value : values()) {
+                if (value.name.equals(string)) {
+                    return value;
+                }
+            }
+            return null;
+        }
+    }
     
     @Override
 	public Relation getRelation() {
@@ -200,7 +232,15 @@ public class PersonSubject implements Subject, Comparator<PersonSubject> {
     public void setOccupation(final String occupation) {
 	this.occupation = occupation;
     }
-    
+
+    public RoleType getRoleType() {
+	return role;
+    }
+
+    public void setRoleType(final RoleType age) {
+	this.role = role;
+    }
+
     public boolean isGroup() {
 	return isGroup;
     }
