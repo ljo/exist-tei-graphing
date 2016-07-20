@@ -35,8 +35,8 @@ import org.exist.Namespaces;
 import org.exist.dom.QName;
 //import org.exist.security.PermissionDeniedException;
 //import org.exist.xmldb.XmldbURI;
+import org.exist.util.ParametersExtractor;
 import org.exist.xquery.*;
-import org.exist.xquery.modules.ModuleUtils;
 import org.exist.xquery.tei.TEIGraphingModule;
 import org.exist.xquery.tei.graphing.jung.JungRelationGraph;
 import org.exist.xquery.tei.graphing.jung.JungRelationGraphVertex;
@@ -132,7 +132,7 @@ public class Visualization extends BasicFunction {
             if (isCalledAs("relation-graph")
                 && getSignature().getArgumentCount() == 3) {
                 if (!args[2].isEmpty()) {
-                    parameters = ModuleUtils.parseParameters(((NodeValue)args[2].itemAt(0)).getNode());
+                    parameters = ParametersExtractor.parseParameters(((NodeValue)args[2].itemAt(0)).getNode());
                 }
             }
 
